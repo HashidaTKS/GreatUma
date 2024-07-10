@@ -45,7 +45,7 @@ namespace GreatUma.Domain
         public Scraper()
         {
             var chromeOptions = new ChromeOptions();
-            chromeOptions.AddArguments("headless", "disable-gpu");
+            //chromeOptions.AddArguments("headless", "disable-gpu");
             Chrome = new ChromeDriver(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), chromeOptions);
         }
 
