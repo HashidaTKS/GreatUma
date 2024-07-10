@@ -30,5 +30,7 @@ namespace GreatUma.Utils
         Trio = 4,
         //ワイド
         Wide = 5,
+        //複勝
+        Place = 6
     }
 }
