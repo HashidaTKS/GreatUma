@@ -23,5 +23,19 @@ namespace GreatUma.Domain.Tests
             Assert.AreEqual(new HoldingRegion("小倉", "10", Utils.RegionType.Central), acrual.HoldingData[1].Region);
             Assert.AreEqual(new HoldingRegion("函館", "02", Utils.RegionType.Central), acrual.HoldingData[2].Region);
         }
+
+        [TestMethod()]
+        public void GetRealTimeOddsTest()
+        {
+            var scraper = new Scraper();
+            var date = new DateTime(2024, 7, 6);
+            var acrual = scraper.GetHoldingInformation(date, Utils.RegionType.Central);
+            Assert.AreEqual(3, acrual.HoldingData.Count);
+            Assert.AreEqual(new HoldingRegion("福島", "03", Utils.RegionType.Central), acrual.HoldingData[0].Region);
+            var raceData = new RaceData(acrual.HoldingData[0], 1);
+            var winResultList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Win);
+            Assert.AreEqual(8, winResultList.Count);
+            Assert.AreEqual(56, winResultList[0].Odds);
+        }
     }
 }
