@@ -12,8 +12,6 @@ namespace GreatUma.Models
         [DataMember]
         public int Number { get; set; }
 
-        public double WinProbability { get; set; }
-
         public string Name { get; set; }
 
         public string Jockey { get; set; }
@@ -25,7 +23,6 @@ namespace GreatUma.Models
         public HorseDatum(int number, double winProbablility, string name, string jockey)
         {
             Number = number;
-            WinProbability = winProbablility;
             Name = name;
             Jockey = jockey;
         }
@@ -41,12 +38,12 @@ namespace GreatUma.Models
             {
                 return false;
             }
-            return other.Number == Number && other.WinProbability == WinProbability && other.Name == Name && other.Jockey == Jockey;
+            return other.Number == Number && other.Name == Name && other.Jockey == Jockey;
         }
 
         public override int GetHashCode()
         {
-            return Number.GetHashCode() ^ WinProbability.GetHashCode() ^ (Name?.GetHashCode() ?? 0) ^ (Jockey?.GetHashCode() ?? 0);
+            return Number.GetHashCode() ^ (Name?.GetHashCode() ?? 0) ^ (Jockey?.GetHashCode() ?? 0);
         }
 
     }
