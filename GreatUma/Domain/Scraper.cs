@@ -45,6 +45,8 @@ namespace GreatUma.Domain
         public Scraper()
         {
             var chromeOptions = new ChromeOptions();
+            chromeOptions.AddArgument("--allow-running-insecure-content");
+            chromeOptions.AddArgument("--ignore-certificate-errors");
             //chromeOptions.AddArguments("headless", "disable-gpu");
             Chrome = new ChromeDriver(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), chromeOptions);
         }
