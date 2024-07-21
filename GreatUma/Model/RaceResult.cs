@@ -22,6 +22,9 @@ namespace GreatUma.Models
         public double WinPayout { get; set; }
 
         [DataMember]
+        public double PlacePayout { get; set; }
+
+        [DataMember]
         public List<double> WidePayoutList { get; set; }
 
         [DataMember]
@@ -38,6 +41,9 @@ namespace GreatUma.Models
 
         [DataMember]
         public List<int> WinHorse { get; set; }
+
+        [DataMember]
+        public List<int> PlaceHorse { get; set; }
 
         [DataMember]
         public List<List<int>> WideHorseList { get; set; }
@@ -70,6 +76,9 @@ namespace GreatUma.Models
                 default:
                 case TicketType.Win:
                     yield return (WinHorse, WinPayout);
+                    yield break;
+                case TicketType.Place:
+                    yield return (PlaceHorse, PlacePayout);
                     yield break;
                 case TicketType.Quinella:
                     yield return(QuinellaHorseList, QuinellaPayout);

@@ -66,7 +66,7 @@ namespace GreatUma.Domain
                     continue;
                 }
                 //ここでは馬番号だけが欲しいので、確率その他の情報は無視
-                yield return new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, -1, "", "") }, odds);
+                yield return new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, -1, "", "") }, odds, odds);
             }
         }
 
@@ -108,7 +108,7 @@ namespace GreatUma.Domain
                     LoggerWrapper.Warn(ex);
                     continue;
                 }
-                yield return new OddsDatum(horseData, odds);
+                yield return new OddsDatum(horseData, odds, odds);
             }
         }
 
@@ -217,7 +217,46 @@ namespace GreatUma.Domain
                         continue;
                     }
                     //ここでは馬番号だけが欲しいので、確率その他の情報は無視
-                    result.Add(new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, -1, "", "") }, odds));
+                    result.Add(new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, -1, "", "") }, odds, odds));
+                }
+            }
+            else if (ticketType == TicketType.Place)
+            {
+                var doc = parser.ParseDocument(Chrome.FindElement(By.TagName("body")).GetAttribute("innerHTML"));
+                var table = doc.GetElementsByTagName("table").FirstOrDefault();
+                if (table == null)
+                {
+                    return null;
+                }
+                var trCollection = table.GetElementsByTagName("tr");
+                var count = trCollection.Length;
+                for (var i = 1; i < count; i++)
+                {
+                    var tdList = trCollection[i].GetElementsByTagName("td");
+                    if (!int.TryParse(tdList[1].TextContent.Replace("\r", "").Replace("\n", ""), out var horse))
+                    {
+                        continue;
+                    }
+                    var oddsString = tdList.LastOrDefault()?.TextContent.Replace("\r", "").Replace("\n", "");
+                    if (string.IsNullOrEmpty(oddsString))
+                    {
+                        continue;
+                    }
+                    var oddsStringList = oddsString.Split("-");
+                    if(oddsStringList.Length != 2)
+                    {
+                        continue;
+                    }
+                    if (!double.TryParse(oddsStringList[0], out var lowOdds))
+                    {
+                        continue;
+                    }
+                    if (!double.TryParse(oddsStringList[1], out var highOdds))
+                    {
+                        continue;
+                    }
+                    //ここでは馬番号だけが欲しいので、確率その他の情報は無視
+                    result.Add(new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, -1, "", "") }, lowOdds, highOdds));
                 }
             }
             else
@@ -242,13 +281,40 @@ namespace GreatUma.Domain
                         {
                             continue;
                         }
-
-                        if (!double.TryParse(tdList.LastOrDefault().TextContent.Replace("\r", "").Replace("\n", "").Split('-').First(), out var odds))
+                        var oddsString = tdList.LastOrDefault()?.TextContent.Replace("\r", "").Replace("\n", "");
+                        if (string.IsNullOrEmpty(oddsString))
                         {
                             continue;
                         }
+                        var oddsStringList = oddsString.Split("-");
+                        double lowOdds = 0;
+                        double highOdds = 0;
+                        if(oddsStringList.Length == 1)
+                        {
+                            if (!double.TryParse(oddsStringList[0], out lowOdds))
+                            {
+                                continue;
+                            }
+                            highOdds = lowOdds;
+                        }
+                        else if (oddsStringList.Length == 2)
+                        {
+                            if (!double.TryParse(oddsStringList[0], out lowOdds))
+                            {
+                                continue;
+                            }
+                            if (!double.TryParse(oddsStringList[1], out highOdds))
+                            {
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            continue;
+                        }
+
                         //ここでは馬番号だけが欲しいので、確率その他の情報は無視
-                        result.Add(new OddsDatum(horseList, odds));
+                        result.Add(new OddsDatum(horseList, lowOdds, highOdds));
                     }
                 }
             }
@@ -269,6 +335,8 @@ namespace GreatUma.Domain
                 var firstPayoutTable = doc.GetElementsByClassName("Payout_Detail_Table").FirstOrDefault();
                 var winHorseString = firstPayoutTable.GetElementsByClassName("Tansho").FirstOrDefault().GetElementsByClassName("Result").FirstOrDefault().TextContent.Trim('\r', '\n');
                 var winPayoutString = firstPayoutTable.GetElementsByClassName("Tansho").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n');
+                var placeHorseString = firstPayoutTable.GetElementsByClassName("Fukusho").FirstOrDefault().GetElementsByClassName("Result").FirstOrDefault().TextContent.Trim('\r', '\n');
+                var placePayoutString = firstPayoutTable.GetElementsByClassName("Fukusho").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n');
                 var quinellaHorseString = firstPayoutTable.GetElementsByClassName("Umaren").FirstOrDefault().GetElementsByClassName("Result").FirstOrDefault().TextContent.Trim('\r', '\n');
                 var quinellaPayoutString = firstPayoutTable.GetElementsByClassName("Umaren").FirstOrDefault().GetElementsByClassName("Payout").FirstOrDefault().TextContent.Trim('\r', '\n');
 
@@ -287,6 +355,8 @@ namespace GreatUma.Domain
                 {
                     WinHorse = WinHorsesStringToList(winHorseString),
                     WinPayout = PayOutStringToDouble(winPayoutString),
+                    PlaceHorse = WinHorsesStringToList(placeHorseString),
+                    PlacePayout = PayOutStringToDouble(placePayoutString),
                     WideHorseList = wideHorseStringList.Select(WinHorsesStringToList).ToList(),
                     WidePayoutList = wideHorsePayoutString.Select(PayOutStringToDouble).ToList(),
                     QuinellaHorseList = WinHorsesStringToList(quinellaHorseString),

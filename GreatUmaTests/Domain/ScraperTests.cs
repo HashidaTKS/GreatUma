@@ -25,7 +25,7 @@ namespace GreatUma.Domain.Tests
         }
 
         [TestMethod()]
-        public void GetRealTimeOddsTest()
+        public void GetRealTimeWinOddsTest()
         {
             var scraper = new Scraper();
             var date = new DateTime(2024, 7, 6);
@@ -35,7 +35,22 @@ namespace GreatUma.Domain.Tests
             var raceData = new RaceData(acrual.HoldingData[0], 1);
             var winResultList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Win);
             Assert.AreEqual(8, winResultList.Count);
-            Assert.AreEqual(56, winResultList[0].Odds);
+            Assert.AreEqual(56, winResultList[0].LowOdds);
+        }
+
+        [TestMethod()]
+        public void GetRealTimePlaceOddsTest()
+        {
+            var scraper = new Scraper();
+            var date = new DateTime(2024, 7, 6);
+            var acrual = scraper.GetHoldingInformation(date, Utils.RegionType.Central);
+            Assert.AreEqual(3, acrual.HoldingData.Count);
+            Assert.AreEqual(new HoldingRegion("福島", "03", Utils.RegionType.Central), acrual.HoldingData[0].Region);
+            var raceData = new RaceData(acrual.HoldingData[0], 1);
+            var winResultList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Place);
+            Assert.AreEqual(8, winResultList.Count);
+            Assert.AreEqual(3.7, winResultList[0].LowOdds);
+            Assert.AreEqual(20.4, winResultList[0].HighOdds);
         }
     }
 }

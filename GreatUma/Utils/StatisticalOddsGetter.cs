@@ -114,7 +114,7 @@ namespace GreatUma.Utils
             }
 
             List<double> probabilityList;
-            var sortedActualOdds = actualWinOdds.OrderBy(_ => _.Odds);
+            var sortedActualOdds = actualWinOdds.OrderBy(_ => _.LowOdds);
 
             //probabilityList = GetCorrectedProbabilityList(
             //    sortedActualOdds.Select((_, index) => Utility.GetStatisticalProbabilityFromActualOdds(_.Odds, index + 1)).ToList());
@@ -123,8 +123,8 @@ namespace GreatUma.Utils
             if (region.RagionType == RegionType.Central)
             {
                 probabilityList = GetCorrectedProbabilityList(
-                    sortedActualOdds.Select((_, index) => Utility.GetStatisticalProbabilityFromActualOdds(_.Odds, index + 1)).ToList());
-                return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index]));
+                    sortedActualOdds.Select((_, index) => Utility.GetStatisticalProbabilityFromActualOdds(_.LowOdds, index + 1)).ToList());
+                return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index], 1 / probabilityList[index]));
             }
 
             //地方競馬
@@ -136,8 +136,8 @@ namespace GreatUma.Utils
             //    return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index]));
             //}
             probabilityList = GetCorrectedProbabilityList(
-                actualWinOdds.Select(_ => Utility.GetStatisticalProbabilityFromActualOddsForRegional(_.Odds)).ToList());
-            return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index]));
+                actualWinOdds.Select(_ => Utility.GetStatisticalProbabilityFromActualOddsForRegional(_.LowOdds)).ToList());
+            return actualWinOdds.Select((_, index) => new OddsDatum(_.HorseData, 1 / probabilityList[index], 1 / probabilityList[index]));
         }
 
         private static double GetProbabilityFromOddsList(List<double> probabilityParcentageLists, int index)

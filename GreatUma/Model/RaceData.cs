@@ -58,13 +58,13 @@ namespace GreatUma.Models
         {
             var urlBase = "http://bachu.purasu.com/r/";
 
-            if (ticketType == TicketType.Win)
+            if (ticketType == TicketType.Win || ticketType == TicketType.Place)
             {
                 return $"{urlBase}{Utility.TicketTypeToRealTimeOddsUrlString[ticketType]}?{GetRealtimeIdString()}&os=n&us=1&it=n";
             }
             else
             {
-                //単勝以外では人気順ページに行く
+                //単勝、複勝以外では人気順ページに行く
                 return $"{urlBase}{Utility.TicketTypeToRealTimeOddsUrlString[ticketType]}?{GetRealtimeIdString()}";
             }
         }
@@ -75,7 +75,7 @@ namespace GreatUma.Models
                         "https://nar.netkeiba.com/odds/index.html" :
                         "https://race.netkeiba.com/odds/index.html";
 
-            if (ticketType == TicketType.Win)
+            if (ticketType == TicketType.Win || ticketType == TicketType.Place)
             {
                 return $"{urlBase}?{GetRaseIdString()}&{Utility.TicketTypeToUrlString[ticketType]}&rf=shutuba_submenu";
             }

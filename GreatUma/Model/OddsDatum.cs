@@ -13,12 +13,21 @@ namespace GreatUma.Models
         public List<HorseDatum> HorseData  { get; set; }
 
         [DataMember]
-        public double Odds { get; set; }
+        ///複勝、ワイドの場合は低い方のオッズ
+        ///そうでない場合はオッズ自体。
+        public double LowOdds { get; set; }
 
-        public OddsDatum(IEnumerable<HorseDatum> horseData, double odds)
+        [DataMember]
+        ///複勝、ワイドの場合は高い方のオッズ
+        ///そうでない場合はオッズ自体。
+        public double HighOdds { get; set; }
+
+
+        public OddsDatum(IEnumerable<HorseDatum> horseData, double lowOdds, double highOdds)
         {
             HorseData = horseData.ToList();
-            Odds = odds;
+            LowOdds = lowOdds;
+            HighOdds = highOdds;
         }
 
         public string GetHorsesString()
@@ -28,7 +37,7 @@ namespace GreatUma.Models
 
         public string GetOddsString()
         {
-            return $"{Odds:F1}";
+            return $"{LowOdds:F1} - {HighOdds:F1}";
         }
 
         //厳密には連複系のケースが考慮できていない。
@@ -39,7 +48,7 @@ namespace GreatUma.Models
             {
                 return false;
             }
-            return other.HorseData.SequenceEqual(HorseData) && other.Odds == Odds;
+            return other.HorseData.SequenceEqual(HorseData) && other.LowOdds == LowOdds && other.HighOdds == HighOdds;
         }
 
         // If Equals() returns true for a pair of objects
@@ -47,7 +56,7 @@ namespace GreatUma.Models
 
         public override int GetHashCode()
         {
-            return HorseData.Select(_ => _.GetHashCode()).Aggregate(Odds.GetHashCode(), (a, b) => a ^ b);
+            return HorseData.Select(_ => _.GetHashCode()).Aggregate(LowOdds.GetHashCode() ^ HighOdds.GetHashCode(), (a, b) => a ^ b);
         }
     }
 }

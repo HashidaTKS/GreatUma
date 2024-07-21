@@ -74,6 +74,7 @@ namespace GreatUma.Utils
         public static Dictionary<TicketType, string> TicketTypeToRealTimeOddsUrlString = new Dictionary<TicketType, string>
         {
             { TicketType.Win , "racet" },
+            { TicketType.Place , "racef" },
             { TicketType.Exacta , "raceoddsrankut" },
             { TicketType.Quinella , "raceoddsranku" },
             { TicketType.Trifecta , "raceoddsrank3rt" },
@@ -84,6 +85,7 @@ namespace GreatUma.Utils
         public static Dictionary<TicketType, string> TicketTypeToUrlString = new Dictionary<TicketType, string>
         {
             { TicketType.Win , "type=b1" },
+            { TicketType.Place , "type=b1" },
             { TicketType.Exacta , "type=b6" },
             { TicketType.Quinella , "type=b4" },
             { TicketType.Trifecta , "type=b8" },
@@ -112,6 +114,7 @@ namespace GreatUma.Utils
         public static Dictionary<TicketType, string> TicketTypeToRakutenBetTypeString = new Dictionary<TicketType, string>
         {
             { TicketType.Win, "単勝"},
+            { TicketType.Place , "複勝" },
             { TicketType.Quinella, "馬複"},
             { TicketType.Exacta, "馬単"},
             { TicketType.Trio, "三連複"},
@@ -122,6 +125,7 @@ namespace GreatUma.Utils
         public static Dictionary<TicketType, string> TicketTypeToJraBetTypeString = new Dictionary<TicketType, string>
         {
             { TicketType.Win, "単勝"},
+            { TicketType.Place , "複勝" },
             { TicketType.Quinella, "馬連"},
             { TicketType.Exacta, "馬単"},
             { TicketType.Trio, "三連複"},
