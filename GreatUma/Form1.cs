@@ -4,7 +4,7 @@ using System.ComponentModel;
 
 namespace GreatUma
 {
-    public class LowInfo
+    public class HorseAndOddsCondition
     {
         [DisplayName("î≠ëóéûçè")]
         public DateTime StartTime { get; set; }
@@ -25,12 +25,9 @@ namespace GreatUma
 
     public partial class Form1 : Form
     {
-        private BindingList<LowInfo> BindingList = new BindingList<LowInfo>();
-
-
+        private BindingList<HorseAndOddsCondition> BindingList = new BindingList<HorseAndOddsCondition>();
         private BindingSource BindingSource = new BindingSource();
-
-        public List<LowInfo> LowInfoList = new List<LowInfo>();
+        public List<HorseAndOddsCondition> HorseAndOddsConditionList = new List<HorseAndOddsCondition>();
 
         public Form1()
         {
@@ -41,27 +38,36 @@ namespace GreatUma
         {
             BindingSource.DataSource = BindingList;
             dataGridView1.DataSource = BindingSource;
-            //BindingList.Add(new LowInfo()
-            //{
-            //    StartTime = DateTime.Now,
-            //    RaceClass = "ñ¢èüóò",
-            //    Course = "é≈ 1500",
-            //    Jocky = "ïêñL",
-            //    MidnightOdds = "1.4 1.1-1.2",
-            //    CurrentOdds = "1.3 1.1-1.1",
-            //    PurchaseCondition = 100
-            //});
+
+            foreach (DataGridViewColumn column in dataGridView1.Columns)
+            {
+                if (column.HeaderText == "3ï™ëOçwì¸èåè")
+                {
+                    continue;
+                }
+                column.ReadOnly = true;
+            }
+
+            BindingList.Add(new HorseAndOddsCondition()
+            {
+                StartTime = DateTime.Now,
+                RaceClass = "ñ¢èüóò",
+                Course = "é≈ 1500",
+                Jocky = "ïêñL",
+                MidnightOdds = "1.4 1.1-1.2",
+                CurrentOdds = "1.3 1.1-1.1",
+                PurchaseCondition = 100
+            });
         }
 
         private void UpdateButton_Click(object sender, EventArgs e)
         {
             var scraper = new Scraper();
-            var date = new DateTime(2024, 7, 6);
+            var date = DateTime.Today;
             var acrual = scraper.GetHoldingInformation(date, Utils.RegionType.Central);
             var raceData = new RaceData(acrual.HoldingData[0], 1);
             var winList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Win);
             var placeList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Place);
-
         }
     }
 }
