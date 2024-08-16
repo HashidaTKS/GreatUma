@@ -4,25 +4,6 @@ using System.ComponentModel;
 
 namespace GreatUma
 {
-    public class HorseAndOddsCondition
-    {
-        [DisplayName("発送時刻")]
-        public DateTime StartTime { get; set; }
-        [DisplayName("クラス")]
-        public string RaceClass { get; set; }
-        [DisplayName("コース")]
-        public string Course { get; set; }
-        [DisplayName("騎手")]
-        public string Jocky { get; set; }
-        [DisplayName("0時オッズ")]
-        public string MidnightOdds { get; set; }
-        [DisplayName("現在オッズ")]
-        public string CurrentOdds { get; set; }
-        [DisplayName("3分前購入条件")]
-        public double PurchaseCondition { get; set; }
-    }
-
-
     public partial class Form1 : Form
     {
         private BindingList<HorseAndOddsCondition> BindingList = new BindingList<HorseAndOddsCondition>();
@@ -70,4 +51,23 @@ namespace GreatUma
             var placeList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Place);
         }
     }
+
+    public class HorseAndOddsCondition
+    {
+        [DisplayName("発送時刻")]
+        public DateTime StartTime { get; set; }
+        [DisplayName("クラス")]
+        public string RaceClass { get; set; }
+        [DisplayName("コース")]
+        public string Course { get; set; }
+        [DisplayName("騎手")]
+        public string Jocky { get; set; }
+        [DisplayName("0時オッズ")]
+        public string MidnightOdds { get; set; }
+        [DisplayName("現在オッズ")]
+        public string CurrentOdds { get; set; }
+        [DisplayName("3分前購入条件")]
+        public double PurchaseCondition { get; set; }
+    }
+
 }
