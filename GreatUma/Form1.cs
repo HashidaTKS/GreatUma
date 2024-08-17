@@ -50,6 +50,18 @@ namespace GreatUma
             var winList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Win);
             var placeList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Place);
         }
+
+        private void label2_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
+        {
+            decimal value = numericUpDown2.Value;
+            decimal roundedValue = Math.Floor(value / 100) * 100;
+            numericUpDown2.Value = roundedValue;
+        }
     }
 
     public class HorseAndOddsCondition
