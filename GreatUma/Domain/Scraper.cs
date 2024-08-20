@@ -70,6 +70,38 @@ namespace GreatUma.Domain
             }
         }
 
+        private IEnumerable<OddsDatum> GetFromPlaceTable(IHtmlCollection<IElement> trCollection)
+        {
+            var count = trCollection.Length;
+            for (var i = 1; i < count; i++)
+            {
+                var tdList = trCollection[i].GetElementsByTagName("td");
+                if (!int.TryParse(tdList[1].TextContent.Replace("\r", "").Replace("\n", ""), out var horse))
+                {
+                    continue;
+                }
+                var oddsString = tdList.LastOrDefault().TextContent.Replace("\r", "").Replace("\n", "");
+                if (string.IsNullOrEmpty(oddsString)){
+                    continue;
+                }
+                var oddsStringList = oddsString.Split("-");
+                if (oddsStringList.Length != 2)
+                {
+                    continue;
+                }
+                if (!double.TryParse(oddsStringList[0], out var lowOdds))
+                {
+                    continue;
+                }
+                if (!double.TryParse(oddsStringList[1], out var highOdds))
+                {
+                    continue;
+                }
+                //ここでは馬番号だけが欲しいので、確率その他の情報は無視
+                yield return new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, -1, "", "") }, lowOdds, highOdds);
+            }
+        }
+
         private IEnumerable<OddsDatum> GetFromPopularTable(IHtmlCollection<IElement> trCollection, TicketType ticketType)
         {
             var rank = 1;
@@ -122,12 +154,22 @@ namespace GreatUma.Domain
             if (ticketType == TicketType.Win)
             {
                 var doc = parser.ParseDocument(Chrome.FindElement(By.TagName("body")).GetAttribute("innerHTML"));
-                var trCollection = doc.GetElementsByClassName("RaceOdds_HorseList_Table").FirstOrDefault()?.GetElementsByTagName("tr");
+                var trCollection = doc.GetElementById("odds_tan_block")?.GetElementsByTagName("tr");
                 if (trCollection == null)
                 {
                     return null;
                 }
                 return GetFromWonTable(trCollection).ToList();
+            }
+            else if (ticketType == TicketType.Place)
+            {
+                var doc = parser.ParseDocument(Chrome.FindElement(By.TagName("body")).GetAttribute("innerHTML"));
+                var trCollection = doc.GetElementById("odds_fuku_block")?.GetElementsByTagName("tr");
+                if (trCollection == null)
+                {
+                    return null;
+                }
+                return GetFromPlaceTable(trCollection).ToList();
             }
             else
             {
@@ -216,8 +258,10 @@ namespace GreatUma.Domain
                     {
                         continue;
                     }
-                    //ここでは馬番号だけが欲しいので、確率その他の情報は無視
-                    result.Add(new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, -1, "", "") }, odds, odds));
+                    var horseName = tdList[2].TextContent.Replace("\r", "").Replace("\n", "");
+                    var jockyName = tdList[3].TextContent.Replace("\r", "").Replace("\n", "");
+                    //ここでは馬番号だけが欲しいので、確率は無視
+                    result.Add(new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, -1, horseName, jockyName) }, odds, odds));
                 }
             }
             else if (ticketType == TicketType.Place)
@@ -255,8 +299,10 @@ namespace GreatUma.Domain
                     {
                         continue;
                     }
-                    //ここでは馬番号だけが欲しいので、確率その他の情報は無視
-                    result.Add(new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, -1, "", "") }, lowOdds, highOdds));
+                    var horseName = tdList[2].TextContent.Replace("\r", "").Replace("\n", "");
+                    var jockyName = tdList[3].TextContent.Replace("\r", "").Replace("\n", "");
+                    //ここでは馬番号だけが欲しいので、確率は無視。
+                    result.Add(new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, -1, horseName, jockyName) }, lowOdds, highOdds));
                 }
             }
             else
@@ -313,7 +359,8 @@ namespace GreatUma.Domain
                             continue;
                         }
 
-                        //ここでは馬番号だけが欲しいので、確率その他の情報は無視
+                        //ここでは馬番号だけが欲しいので、確率その他の情報は無視。
+                        //そもそもこのテーブルから馬名や騎手名は分からない。
                         result.Add(new OddsDatum(horseList, lowOdds, highOdds));
                     }
                 }
