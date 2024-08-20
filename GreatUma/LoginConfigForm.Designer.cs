@@ -1,4 +1,4 @@
-﻿namespace HorseRacingAutoPurchaser
+﻿namespace GreatUma
 {
     partial class LoginConfigForm
     {
@@ -28,244 +28,271 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.textBox_IpaSubscriberNumber = new System.Windows.Forms.TextBox();
-            this.textBox_InetId = new System.Windows.Forms.TextBox();
-            this.textBox_P_Ars = new System.Windows.Forms.TextBox();
-            this.textBox_JraPassword = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.groupBox2 = new System.Windows.Forms.GroupBox();
-            this.textBox_NetkeibaLoginId = new System.Windows.Forms.TextBox();
-            this.textBox_NetkeibaPassword = new System.Windows.Forms.TextBox();
-            this.label7 = new System.Windows.Forms.Label();
-            this.label8 = new System.Windows.Forms.Label();
-            this.groupBox3 = new System.Windows.Forms.GroupBox();
-            this.textBox_RakutenLoginId = new System.Windows.Forms.TextBox();
-            this.textBox_RakutenPassword = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.label6 = new System.Windows.Forms.Label();
-            this.button_Save = new System.Windows.Forms.Button();
-            this.button_Cancel = new System.Windows.Forms.Button();
-            this.groupBox1.SuspendLayout();
-            this.groupBox2.SuspendLayout();
-            this.groupBox3.SuspendLayout();
-            this.SuspendLayout();
+            textBox_IpaSubscriberNumber = new TextBox();
+            textBox_InetId = new TextBox();
+            textBox_P_Ars = new TextBox();
+            textBox_JraPassword = new TextBox();
+            label1 = new Label();
+            label2 = new Label();
+            label3 = new Label();
+            label4 = new Label();
+            groupBox1 = new GroupBox();
+            groupBox2 = new GroupBox();
+            textBox_NetkeibaLoginId = new TextBox();
+            textBox_NetkeibaPassword = new TextBox();
+            label7 = new Label();
+            label8 = new Label();
+            groupBox3 = new GroupBox();
+            textBox_RakutenLoginId = new TextBox();
+            textBox_RakutenPassword = new TextBox();
+            label5 = new Label();
+            label6 = new Label();
+            button_Save = new Button();
+            button_Cancel = new Button();
+            groupBox1.SuspendLayout();
+            groupBox2.SuspendLayout();
+            groupBox3.SuspendLayout();
+            SuspendLayout();
             // 
             // textBox_IpaSubscriberNumber
             // 
-            this.textBox_IpaSubscriberNumber.Location = new System.Drawing.Point(102, 14);
-            this.textBox_IpaSubscriberNumber.Name = "textBox_IpaSubscriberNumber";
-            this.textBox_IpaSubscriberNumber.Size = new System.Drawing.Size(294, 19);
-            this.textBox_IpaSubscriberNumber.TabIndex = 0;
+            textBox_IpaSubscriberNumber.Location = new Point(119, 18);
+            textBox_IpaSubscriberNumber.Margin = new Padding(4, 4, 4, 4);
+            textBox_IpaSubscriberNumber.Name = "textBox_IpaSubscriberNumber";
+            textBox_IpaSubscriberNumber.Size = new Size(342, 23);
+            textBox_IpaSubscriberNumber.TabIndex = 0;
             // 
             // textBox_InetId
             // 
-            this.textBox_InetId.Location = new System.Drawing.Point(102, 48);
-            this.textBox_InetId.Name = "textBox_InetId";
-            this.textBox_InetId.Size = new System.Drawing.Size(294, 19);
-            this.textBox_InetId.TabIndex = 1;
+            textBox_InetId.Location = new Point(119, 60);
+            textBox_InetId.Margin = new Padding(4, 4, 4, 4);
+            textBox_InetId.Name = "textBox_InetId";
+            textBox_InetId.Size = new Size(342, 23);
+            textBox_InetId.TabIndex = 1;
             // 
             // textBox_P_Ars
             // 
-            this.textBox_P_Ars.Location = new System.Drawing.Point(102, 82);
-            this.textBox_P_Ars.Name = "textBox_P_Ars";
-            this.textBox_P_Ars.Size = new System.Drawing.Size(294, 19);
-            this.textBox_P_Ars.TabIndex = 2;
+            textBox_P_Ars.Location = new Point(119, 102);
+            textBox_P_Ars.Margin = new Padding(4, 4, 4, 4);
+            textBox_P_Ars.Name = "textBox_P_Ars";
+            textBox_P_Ars.Size = new Size(342, 23);
+            textBox_P_Ars.TabIndex = 2;
             // 
             // textBox_JraPassword
             // 
-            this.textBox_JraPassword.Location = new System.Drawing.Point(102, 116);
-            this.textBox_JraPassword.Name = "textBox_JraPassword";
-            this.textBox_JraPassword.Size = new System.Drawing.Size(294, 19);
-            this.textBox_JraPassword.TabIndex = 3;
+            textBox_JraPassword.Location = new Point(119, 145);
+            textBox_JraPassword.Margin = new Padding(4, 4, 4, 4);
+            textBox_JraPassword.Name = "textBox_JraPassword";
+            textBox_JraPassword.Size = new Size(342, 23);
+            textBox_JraPassword.TabIndex = 3;
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 17);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(90, 12);
-            this.label1.TabIndex = 6;
-            this.label1.Text = "IPAT加入者番号";
+            label1.AutoSize = true;
+            label1.Location = new Point(7, 21);
+            label1.Margin = new Padding(4, 0, 4, 0);
+            label1.Name = "label1";
+            label1.Size = new Size(91, 15);
+            label1.TabIndex = 6;
+            label1.Text = "IPAT加入者番号";
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(6, 51);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(47, 12);
-            this.label2.TabIndex = 7;
-            this.label2.Text = "INET-ID";
+            label2.AutoSize = true;
+            label2.Location = new Point(7, 64);
+            label2.Margin = new Padding(4, 0, 4, 0);
+            label2.Name = "label2";
+            label2.Size = new Size(46, 15);
+            label2.TabIndex = 7;
+            label2.Text = "INET-ID";
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 85);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(41, 12);
-            this.label3.TabIndex = 8;
-            this.label3.Text = "P-ARS";
+            label3.AutoSize = true;
+            label3.Location = new Point(7, 106);
+            label3.Margin = new Padding(4, 0, 4, 0);
+            label3.Name = "label3";
+            label3.Size = new Size(40, 15);
+            label3.TabIndex = 8;
+            label3.Text = "P-ARS";
             // 
             // label4
             // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(6, 119);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(53, 12);
-            this.label4.TabIndex = 9;
-            this.label4.Text = "暗証番号";
+            label4.AutoSize = true;
+            label4.Location = new Point(7, 149);
+            label4.Margin = new Padding(4, 0, 4, 0);
+            label4.Name = "label4";
+            label4.Size = new Size(55, 15);
+            label4.TabIndex = 9;
+            label4.Text = "暗証番号";
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Controls.Add(this.textBox_IpaSubscriberNumber);
-            this.groupBox1.Controls.Add(this.textBox_InetId);
-            this.groupBox1.Controls.Add(this.textBox_P_Ars);
-            this.groupBox1.Controls.Add(this.textBox_JraPassword);
-            this.groupBox1.Controls.Add(this.label4);
-            this.groupBox1.Controls.Add(this.label1);
-            this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Location = new System.Drawing.Point(12, 12);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(420, 150);
-            this.groupBox1.TabIndex = 14;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "JRA";
+            groupBox1.Controls.Add(label3);
+            groupBox1.Controls.Add(textBox_IpaSubscriberNumber);
+            groupBox1.Controls.Add(textBox_InetId);
+            groupBox1.Controls.Add(textBox_P_Ars);
+            groupBox1.Controls.Add(textBox_JraPassword);
+            groupBox1.Controls.Add(label4);
+            groupBox1.Controls.Add(label1);
+            groupBox1.Controls.Add(label2);
+            groupBox1.Location = new Point(14, 15);
+            groupBox1.Margin = new Padding(4, 4, 4, 4);
+            groupBox1.Name = "groupBox1";
+            groupBox1.Padding = new Padding(4, 4, 4, 4);
+            groupBox1.Size = new Size(490, 188);
+            groupBox1.TabIndex = 14;
+            groupBox1.TabStop = false;
+            groupBox1.Text = "JRA";
             // 
             // groupBox2
             // 
-            this.groupBox2.Controls.Add(this.textBox_NetkeibaLoginId);
-            this.groupBox2.Controls.Add(this.textBox_NetkeibaPassword);
-            this.groupBox2.Controls.Add(this.label7);
-            this.groupBox2.Controls.Add(this.label8);
-            this.groupBox2.Location = new System.Drawing.Point(12, 168);
-            this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(420, 85);
-            this.groupBox2.TabIndex = 15;
-            this.groupBox2.TabStop = false;
-            this.groupBox2.Text = "netkeiba.com";
+            groupBox2.Controls.Add(textBox_NetkeibaLoginId);
+            groupBox2.Controls.Add(textBox_NetkeibaPassword);
+            groupBox2.Controls.Add(label7);
+            groupBox2.Controls.Add(label8);
+            groupBox2.Location = new Point(14, 210);
+            groupBox2.Margin = new Padding(4, 4, 4, 4);
+            groupBox2.Name = "groupBox2";
+            groupBox2.Padding = new Padding(4, 4, 4, 4);
+            groupBox2.Size = new Size(490, 106);
+            groupBox2.TabIndex = 15;
+            groupBox2.TabStop = false;
+            groupBox2.Text = "netkeiba.com";
             // 
             // textBox_NetkeibaLoginId
             // 
-            this.textBox_NetkeibaLoginId.Location = new System.Drawing.Point(103, 21);
-            this.textBox_NetkeibaLoginId.Name = "textBox_NetkeibaLoginId";
-            this.textBox_NetkeibaLoginId.Size = new System.Drawing.Size(294, 19);
-            this.textBox_NetkeibaLoginId.TabIndex = 0;
+            textBox_NetkeibaLoginId.Location = new Point(120, 26);
+            textBox_NetkeibaLoginId.Margin = new Padding(4, 4, 4, 4);
+            textBox_NetkeibaLoginId.Name = "textBox_NetkeibaLoginId";
+            textBox_NetkeibaLoginId.Size = new Size(342, 23);
+            textBox_NetkeibaLoginId.TabIndex = 0;
             // 
             // textBox_NetkeibaPassword
             // 
-            this.textBox_NetkeibaPassword.Location = new System.Drawing.Point(103, 55);
-            this.textBox_NetkeibaPassword.Name = "textBox_NetkeibaPassword";
-            this.textBox_NetkeibaPassword.Size = new System.Drawing.Size(294, 19);
-            this.textBox_NetkeibaPassword.TabIndex = 1;
+            textBox_NetkeibaPassword.Location = new Point(120, 69);
+            textBox_NetkeibaPassword.Margin = new Padding(4, 4, 4, 4);
+            textBox_NetkeibaPassword.Name = "textBox_NetkeibaPassword";
+            textBox_NetkeibaPassword.Size = new Size(342, 23);
+            textBox_NetkeibaPassword.TabIndex = 1;
             // 
             // label7
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(7, 24);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(52, 12);
-            this.label7.TabIndex = 6;
-            this.label7.Text = "ログインID";
+            label7.AutoSize = true;
+            label7.Location = new Point(8, 30);
+            label7.Margin = new Padding(4, 0, 4, 0);
+            label7.Name = "label7";
+            label7.Size = new Size(53, 15);
+            label7.TabIndex = 6;
+            label7.Text = "ログインID";
             // 
             // label8
             // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(7, 58);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(52, 12);
-            this.label8.TabIndex = 7;
-            this.label8.Text = "パスワード";
+            label8.AutoSize = true;
+            label8.Location = new Point(8, 72);
+            label8.Margin = new Padding(4, 0, 4, 0);
+            label8.Name = "label8";
+            label8.Size = new Size(51, 15);
+            label8.TabIndex = 7;
+            label8.Text = "パスワード";
             // 
             // groupBox3
             // 
-            this.groupBox3.Controls.Add(this.textBox_RakutenLoginId);
-            this.groupBox3.Controls.Add(this.textBox_RakutenPassword);
-            this.groupBox3.Controls.Add(this.label5);
-            this.groupBox3.Controls.Add(this.label6);
-            this.groupBox3.Location = new System.Drawing.Point(12, 259);
-            this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(420, 88);
-            this.groupBox3.TabIndex = 16;
-            this.groupBox3.TabStop = false;
-            this.groupBox3.Text = "楽天競馬";
+            groupBox3.Controls.Add(textBox_RakutenLoginId);
+            groupBox3.Controls.Add(textBox_RakutenPassword);
+            groupBox3.Controls.Add(label5);
+            groupBox3.Controls.Add(label6);
+            groupBox3.Enabled = false;
+            groupBox3.Location = new Point(14, 324);
+            groupBox3.Margin = new Padding(4, 4, 4, 4);
+            groupBox3.Name = "groupBox3";
+            groupBox3.Padding = new Padding(4, 4, 4, 4);
+            groupBox3.Size = new Size(490, 110);
+            groupBox3.TabIndex = 16;
+            groupBox3.TabStop = false;
+            groupBox3.Text = "楽天競馬";
             // 
             // textBox_RakutenLoginId
             // 
-            this.textBox_RakutenLoginId.Location = new System.Drawing.Point(103, 24);
-            this.textBox_RakutenLoginId.Name = "textBox_RakutenLoginId";
-            this.textBox_RakutenLoginId.Size = new System.Drawing.Size(294, 19);
-            this.textBox_RakutenLoginId.TabIndex = 0;
+            textBox_RakutenLoginId.Enabled = false;
+            textBox_RakutenLoginId.Location = new Point(120, 30);
+            textBox_RakutenLoginId.Margin = new Padding(4, 4, 4, 4);
+            textBox_RakutenLoginId.Name = "textBox_RakutenLoginId";
+            textBox_RakutenLoginId.Size = new Size(342, 23);
+            textBox_RakutenLoginId.TabIndex = 0;
             // 
             // textBox_RakutenPassword
             // 
-            this.textBox_RakutenPassword.Location = new System.Drawing.Point(103, 58);
-            this.textBox_RakutenPassword.Name = "textBox_RakutenPassword";
-            this.textBox_RakutenPassword.Size = new System.Drawing.Size(294, 19);
-            this.textBox_RakutenPassword.TabIndex = 1;
+            textBox_RakutenPassword.Enabled = false;
+            textBox_RakutenPassword.Location = new Point(120, 72);
+            textBox_RakutenPassword.Margin = new Padding(4, 4, 4, 4);
+            textBox_RakutenPassword.Name = "textBox_RakutenPassword";
+            textBox_RakutenPassword.Size = new Size(342, 23);
+            textBox_RakutenPassword.TabIndex = 1;
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(7, 27);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(40, 12);
-            this.label5.TabIndex = 6;
-            this.label5.Text = "楽天ID";
+            label5.AutoSize = true;
+            label5.Location = new Point(8, 34);
+            label5.Margin = new Padding(4, 0, 4, 0);
+            label5.Name = "label5";
+            label5.Size = new Size(42, 15);
+            label5.TabIndex = 6;
+            label5.Text = "楽天ID";
             // 
             // label6
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(7, 61);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(76, 12);
-            this.label6.TabIndex = 7;
-            this.label6.Text = "楽天パスワード";
+            label6.AutoSize = true;
+            label6.Location = new Point(8, 76);
+            label6.Margin = new Padding(4, 0, 4, 0);
+            label6.Name = "label6";
+            label6.Size = new Size(75, 15);
+            label6.TabIndex = 7;
+            label6.Text = "楽天パスワード";
             // 
             // button_Save
             // 
-            this.button_Save.Location = new System.Drawing.Point(275, 351);
-            this.button_Save.Name = "button_Save";
-            this.button_Save.Size = new System.Drawing.Size(75, 23);
-            this.button_Save.TabIndex = 17;
-            this.button_Save.Text = "保存する";
-            this.button_Save.UseVisualStyleBackColor = true;
-            this.button_Save.Click += new System.EventHandler(this.Button_Save_Click);
+            button_Save.Location = new Point(321, 439);
+            button_Save.Margin = new Padding(4, 4, 4, 4);
+            button_Save.Name = "button_Save";
+            button_Save.Size = new Size(88, 29);
+            button_Save.TabIndex = 17;
+            button_Save.Text = "保存する";
+            button_Save.UseVisualStyleBackColor = true;
+            button_Save.Click += Button_Save_Click;
             // 
             // button_Cancel
             // 
-            this.button_Cancel.Location = new System.Drawing.Point(356, 351);
-            this.button_Cancel.Name = "button_Cancel";
-            this.button_Cancel.Size = new System.Drawing.Size(75, 23);
-            this.button_Cancel.TabIndex = 18;
-            this.button_Cancel.Text = "キャンセル";
-            this.button_Cancel.UseVisualStyleBackColor = true;
-            this.button_Cancel.Click += new System.EventHandler(this.Button_Cancel_Click);
+            button_Cancel.Location = new Point(415, 439);
+            button_Cancel.Margin = new Padding(4, 4, 4, 4);
+            button_Cancel.Name = "button_Cancel";
+            button_Cancel.Size = new Size(88, 29);
+            button_Cancel.TabIndex = 18;
+            button_Cancel.Text = "キャンセル";
+            button_Cancel.UseVisualStyleBackColor = true;
+            button_Cancel.Click += Button_Cancel_Click;
             // 
             // LoginConfigForm
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(440, 380);
-            this.Controls.Add(this.button_Cancel);
-            this.Controls.Add(this.button_Save);
-            this.Controls.Add(this.groupBox3);
-            this.Controls.Add(this.groupBox2);
-            this.Controls.Add(this.groupBox1);
-            this.Name = "LoginConfigForm";
-            this.Text = "ログイン設定";
-            this.Load += new System.EventHandler(this.Form2_Load);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
-            this.groupBox2.ResumeLayout(false);
-            this.groupBox2.PerformLayout();
-            this.groupBox3.ResumeLayout(false);
-            this.groupBox3.PerformLayout();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(513, 475);
+            Controls.Add(button_Cancel);
+            Controls.Add(button_Save);
+            Controls.Add(groupBox3);
+            Controls.Add(groupBox2);
+            Controls.Add(groupBox1);
+            Margin = new Padding(4, 4, 4, 4);
+            Name = "LoginConfigForm";
+            Text = "ログイン設定";
+            Load += Form2_Load;
+            groupBox1.ResumeLayout(false);
+            groupBox1.PerformLayout();
+            groupBox2.ResumeLayout(false);
+            groupBox2.PerformLayout();
+            groupBox3.ResumeLayout(false);
+            groupBox3.PerformLayout();
+            ResumeLayout(false);
         }
 
         #endregion

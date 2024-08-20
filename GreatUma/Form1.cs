@@ -62,6 +62,12 @@ namespace GreatUma
             decimal roundedValue = Math.Floor(value / 100) * 100;
             numericUpDown2.Value = roundedValue;
         }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            var loginConfigForm = new LoginConfigForm();
+            loginConfigForm.ShowDialog();
+        }
     }
 
     public class HorseAndOddsCondition
@@ -72,6 +78,8 @@ namespace GreatUma
         public string RaceClass { get; set; }
         [DisplayName("コース")]
         public string Course { get; set; }
+        [DisplayName("馬番")]
+        public string HorseNum { get; set; }
         [DisplayName("騎手")]
         public string Jocky { get; set; }
         [DisplayName("0時オッズ")]

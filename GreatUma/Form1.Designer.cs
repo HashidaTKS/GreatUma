@@ -164,6 +164,7 @@
             button2.TabIndex = 13;
             button2.Text = "ログイン設定";
             button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
             // 
             // button3
             // 

@@ -11,7 +11,7 @@ using GreatUma.Infrastructures;
 using GreatUma.Models;
 
 
-namespace HorseRacingAutoPurchaser
+namespace GreatUma
 {
     public partial class LoginConfigForm : Form
     {
