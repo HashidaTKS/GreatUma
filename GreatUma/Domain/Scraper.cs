@@ -189,7 +189,7 @@ namespace GreatUma.Domain
 
         public List<OddsDatum> GetOdds(RaceData raceData, TicketType ticketType)
         {
-            Chrome.Url = raceData.ToRaseOddsPageUrlString(ticketType);
+            Chrome.Url = raceData.ToRaceOddsPageUrlString(ticketType);
             Thread.Sleep(500);
             //高速化のためにchromedriverではなくAngleSharpを使っている
             var parser = new HtmlParser();

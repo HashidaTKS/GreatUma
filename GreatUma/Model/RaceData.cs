@@ -37,7 +37,7 @@ namespace GreatUma.Models
             HorseCount = HoldingDatum.HorseCountList[raceNumber - 1];
         }
 
-        private string GetRaseIdString()
+        private string GetRaceIdString()
         {
             if (HoldingDatum.Region.RagionType == RegionType.Central)
             {
@@ -71,10 +71,10 @@ namespace GreatUma.Models
 
         public string ToHorseInfoPageUrlString()
         {
-            return $"https://race.netkeiba.com/race/shutuba.html?{GetRaseIdString()}&rf=race_submenu";
+            return $"https://race.netkeiba.com/race/shutuba.html?{GetRaceIdString()}&rf=race_submenu";
         }
 
-        public string ToRaseOddsPageUrlString(TicketType ticketType)
+        public string ToRaceOddsPageUrlString(TicketType ticketType)
         {
             var urlBase = HoldingDatum.Region.RagionType == RegionType.Regional ?
                         "https://nar.netkeiba.com/odds/index.html" :
@@ -82,12 +82,12 @@ namespace GreatUma.Models
 
             if (ticketType == TicketType.Win || ticketType == TicketType.Place)
             {
-                return $"{urlBase}?{GetRaseIdString()}&{Utility.TicketTypeToUrlString[ticketType]}&rf=shutuba_submenu";
+                return $"{urlBase}?{GetRaceIdString()}&{Utility.TicketTypeToUrlString[ticketType]}&rf=shutuba_submenu";
             }
             else
             {
                 //単勝以外では人気順ページに行く
-                return $"{urlBase}?{GetRaseIdString()}&{Utility.TicketTypeToUrlString[ticketType]}&housiki=c99";
+                return $"{urlBase}?{GetRaceIdString()}&{Utility.TicketTypeToUrlString[ticketType]}&housiki=c99";
             }
         }
 
@@ -98,7 +98,7 @@ namespace GreatUma.Models
             "https://race.netkeiba.com/ipat/ipat.html";
 
 
-            return $"{urlBase}?date={HoldingDatum.HeldDate.ToString("yyyyMMdd")}&{GetRaseIdString()}";
+            return $"{urlBase}?date={HoldingDatum.HeldDate.ToString("yyyyMMdd")}&{GetRaceIdString()}";
         }
 
         public string ToRaceResultPageUrlString()
@@ -107,16 +107,16 @@ namespace GreatUma.Models
             "https://nar.netkeiba.com/race/result.html" :
             "https://race.netkeiba.com/race/result.html";
 
-            return $"{urlBase}?{GetRaseIdString()}";
+            return $"{urlBase}?{GetRaceIdString()}";
         }
 
-        public string ToRaseListPageUrlString()
+        public string ToRaceListPageUrlString()
         {
             var urlBase = HoldingDatum.Region.RagionType == RegionType.Regional ?
                         "https://nar.netkeiba.com/odds/index.html" :
                         "https://race.netkeiba.com/odds/index.html";
 
-            return $"{urlBase}?{GetRaseIdString()}";
+            return $"{urlBase}?{GetRaceIdString()}";
         }
 
         public bool Equals(RaceData raceData)
