@@ -25,6 +25,22 @@ namespace GreatUma.Domain.Tests
         }
 
         [TestMethod()]
+        public void GetHorseInfoTest()
+        {
+            var scraper = new Scraper();
+            var date = new DateTime(2024, 7, 6);
+            var acrual = scraper.GetHoldingInformation(date, Utils.RegionType.Central);
+            Assert.AreEqual(3, acrual.HoldingData.Count);
+            Assert.AreEqual(new HoldingRegion("福島", "03", Utils.RegionType.Central), acrual.HoldingData[0].Region);
+            var raceData = new RaceData(acrual.HoldingData[0], 1);
+            var horseInfoList = scraper.GetHorseInfo(raceData);
+            Assert.AreEqual(8, horseInfoList.Count);
+            Assert.AreEqual(new HorseDatum(1, "ビップジェシー", "菊沢"), horseInfoList[0]);
+            Assert.AreEqual(new HorseDatum(8, "マイディアホープ", "石田"), horseInfoList[7]);
+
+        }
+
+        [TestMethod()]
         public void GetWinOddsTest()
         {
             var scraper = new Scraper();

@@ -69,6 +69,11 @@ namespace GreatUma.Models
             }
         }
 
+        public string ToHorseInfoPageUrlString()
+        {
+            return $"https://race.netkeiba.com/race/shutuba.html?{GetRaseIdString()}&rf=race_submenu";
+        }
+
         public string ToRaseOddsPageUrlString(TicketType ticketType)
         {
             var urlBase = HoldingDatum.Region.RagionType == RegionType.Regional ?

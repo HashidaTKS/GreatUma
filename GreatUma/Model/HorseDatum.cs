@@ -20,7 +20,7 @@ namespace GreatUma.Models
         {
         }
 
-        public HorseDatum(int number, double winProbablility, string name, string jockey)
+        public HorseDatum(int number, string name, string jockey)
         {
             Number = number;
             Name = name;
