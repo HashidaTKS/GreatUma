@@ -125,8 +125,9 @@ namespace GreatUma.Domain
                 Chrome.FindElement(By.Id("ipat_dialog")).Click();
                 Thread.Sleep(3 * 1000);
 
-                var frameElement = Chrome.FindElement(By.ClassName("cboxIframe"));
-                Chrome.SwitchTo().Frame(frameElement);
+                Chrome.SwitchTo().Window(Chrome.WindowHandles.Last());
+                //var frameElement = Chrome.FindElement(By.ClassName("cboxIframe"));
+                //Chrome.SwitchTo().Frame(frameElement);
 
                 GoNextIfIpatCooperationDialogIsDisplayed(Chrome);
                 LoginToIpat(Chrome);
