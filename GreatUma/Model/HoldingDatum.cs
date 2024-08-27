@@ -40,11 +40,17 @@ namespace GreatUma.Models
         [DataMember]
         public List<int> HorseCountList { get; set; }
 
+        [DataMember]
+        public List<int> CourseLengthList { get; set; }
+
+        [DataMember]
+        public List<CourseType> CourseTypeList { get; set; }
+
         public int TotalRaceCount => StartTimeList.Count;
 
         public bool HasFullData => !string.IsNullOrEmpty(Region.RegionId) && NumberOfHeld > 0 && NumberOfDay > 0 && HeldDate > DateTime.MinValue && StartTimeList?.Count > 0;
 
-        public HoldingDatum(HoldingRegion region, int numberOfHeld, int numberOfDay, DateTime heldDate, List<DateTime> startTimeList, List<int> horseCountList)
+        public HoldingDatum(HoldingRegion region, int numberOfHeld, int numberOfDay, DateTime heldDate, List<DateTime> startTimeList, List<int> horseCountList, List<int> courseLengthList, List<CourseType> courseTypeList)
         {
             Region = region;
             NumberOfHeld = numberOfHeld;
@@ -52,10 +58,12 @@ namespace GreatUma.Models
             HeldDate = heldDate.Date;
             StartTimeList = startTimeList;
             HorseCountList = horseCountList;
+            CourseLengthList = courseLengthList;
+            CourseTypeList = courseTypeList;
         }
 
-        public HoldingDatum(string regionName,int numberOfHeld, int numberOfDay, DateTime heldDate, List<DateTime> startTimeList, List<int> horseCountList) 
-            : this(Utility.GetRegionFromName(regionName), numberOfHeld, numberOfDay, heldDate, startTimeList, horseCountList)
+        public HoldingDatum(string regionName,int numberOfHeld, int numberOfDay, DateTime heldDate, List<DateTime> startTimeList, List<int> horseCountList, List<int> courseLengthList, List<CourseType> courseTypeList) 
+            : this(Utility.GetRegionFromName(regionName), numberOfHeld, numberOfDay, heldDate, startTimeList, horseCountList, courseLengthList, courseTypeList)
         {
         }
 

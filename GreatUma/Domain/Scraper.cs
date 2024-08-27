@@ -529,10 +529,13 @@ namespace GreatUma.Domain
                     }
                     var startTimeList = new List<DateTime>();
                     var horseCountList = new List<int>();
+                    var courseLengthList = new List<int>();
+                    var courseTypeList = new List<CourseType>();
+
                     foreach (var item in raceListDataListCollection[i].GetElementsByClassName("RaceList_ItemContent"))
                     {
                         var textForData = item.GetElementsByClassName("RaceData").FirstOrDefault().TextContent.Replace("\r", "").Replace("\n", "");
-                        var regexForData = new Regex(@".*?(\d\d):(\d\d).*?(\d+)頭.*?");
+                        var regexForData = new Regex(@".*?(\d\d):(\d\d).*?(芝|ダ)(\d+)m.*?(\d+)頭.*?");
                         var matchForData = regexForData.Match(textForData);
                         if (!matchForData.Success)
                         {
@@ -547,16 +550,23 @@ namespace GreatUma.Domain
                         {
                             continue;
                         }
-                        if (!int.TryParse(matchForData.Groups[3].Value, out var horseNumber))
+                        var courseType = matchForData.Groups[3].Value;
+                        if (!int.TryParse(matchForData.Groups[4].Value, out var courseLength))
+                        {
+                            continue;
+                        }
+                        if (!int.TryParse(matchForData.Groups[5].Value, out var horseNumber))
                         {
                             continue;
                         }
                         var baseDate = raceDate.Date;
                         startTimeList.Add(baseDate.AddHours(hours).AddMinutes(minutes));
                         horseCountList.Add(horseNumber);
+                        courseTypeList.Add(courseType == "ダ" ? CourseType.Dirt : CourseType.Grass);
+                        courseLengthList.Add(courseLength);
                     }
 
-                    raceUrlInfoList.Add(new HoldingDatum(regionName, numberOfHeld, numberOfDay, raceDate, startTimeList, horseCountList));
+                    raceUrlInfoList.Add(new HoldingDatum(regionName, numberOfHeld, numberOfDay, raceDate, startTimeList, horseCountList, courseLengthList, courseTypeList));
                 }
                 return new HoldingInformation(raceUrlInfoList);
             }
