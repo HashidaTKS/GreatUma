@@ -58,12 +58,12 @@ namespace GreatUma.Domain.Tests
                     null),
                 1);
             var betDatum = new BetDatum(raceData, new List<int>() { 1 }, 100, 1.1, 1.1, Utils.TicketType.Win);
+            //// テスト時は実際にログイン情報を指定する。
+            //// ログイン情報はコミットしないように注意。
             var loginConfig = new LoginConfig()
             {
 
             };
-            //// テスト時は実際にログイン情報を指定する。
-            //// ログイン情報はコミットしないように注意。
             var purchaser = new AutoPurchaser(loginConfig);
             purchaser.Purchase(new List<BetDatum>() { betDatum });
             //Assert.Fail();

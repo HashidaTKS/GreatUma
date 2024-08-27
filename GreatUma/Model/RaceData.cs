@@ -7,11 +7,12 @@ using GreatUma.Utils;
 
 namespace GreatUma.Models
 {
+    //現在はRaceDataがHoldingDatumを持っているが、これは参照関係がおかしい。
+    //HoldingDatumはRaceDataの集合体であるべき。
     [DataContract]
     [Serializable]
     public class RaceData
     {
-
         [DataMember]
         public HoldingDatum HoldingDatum { get; set; }
 
@@ -24,6 +25,13 @@ namespace GreatUma.Models
         [DataMember]
         public int HorseCount { get; set; }
 
+        [DataMember]
+        public int CourseLength { get; set; }
+
+        [DataMember]
+        public CourseType CourseType { get; set; }
+
+
         public string NumberOfHeldAsUrlString => HoldingDatum.NumberOfHeld.ToString().PadLeft(2, '0');
         public string NumberOfDayAsUrlString => HoldingDatum.NumberOfDay.ToString().PadLeft(2, '0');
         public string RaceNumberAsUrlString => RaceNumber.ToString().PadLeft(2, '0');
@@ -35,6 +43,8 @@ namespace GreatUma.Models
             RaceNumber = raceNumber;
             StartTime = HoldingDatum.StartTimeList[raceNumber - 1];
             HorseCount = HoldingDatum.HorseCountList[raceNumber - 1];
+            CourseLength = HoldingDatum.CourseLengthList[raceNumber - 1];
+            CourseType = HoldingDatum.CourseTypeList[raceNumber - 1];
         }
 
         private string GetRaceIdString()

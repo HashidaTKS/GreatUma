@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace GreatUma.Model
 {
-        internal class HorseAndOddsCondition
+        public class HorseAndOddsCondition
         {
             [DisplayName("発送時刻")]
             public DateTime StartTime { get; set; }
