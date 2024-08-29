@@ -44,10 +44,46 @@ namespace GreatUma.Domain
                     HorseNum = horseNumberForOdds.ToString(),
                     Jocky = horseDatum.Jockey,
                     MidnightOdds = $"{mostPopularWin.LowOdds} {mostPopularPlace.LowOdds}-{mostPopularPlace.HighOdds}",
-                    CurrentOdds = "",
+                    CurrentOdds = $"{mostPopularWin.LowOdds} {mostPopularPlace.LowOdds}-{mostPopularPlace.HighOdds}",
                     PurchaseCondition = -1,
                 };
             }
         }
-    }
+
+        public IEnumerable<HorseAndOddsCondition> UpdateRealtimeOdds(Scraper scraper, RaceData raceData, IEnumerable<HorseAndOddsCondition> horseAndOdds)
+        {
+            var placeOddsList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Place);
+            var winOddsList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Win);
+            if (placeOddsList == null || winOddsList == null)
+            {
+                foreach(var horseAndOddsDatum in horseAndOdds)
+                {
+                    yield return horseAndOddsDatum;
+                }
+                yield break;
+            }
+            foreach (var horseAndOddsDatum in horseAndOdds)
+            {
+                if(!int.TryParse(horseAndOddsDatum.HorseNum, out var horseNum))
+                {
+                    yield return horseAndOddsDatum;
+                    continue;
+                }
+                // 複勝のオッズなので、馬は一頭。（馬連なら二頭、三連複なら三頭になる。）
+                var currentPlaceOdds = placeOddsList
+                    .Where(_ => _.HorseData.Count == 1)?
+                    .FirstOrDefault(_ => _.HorseData[0].Number == horseNum);
+                var currentWinOdds = placeOddsList
+                    .Where(_ => _.HorseData.Count == 1)?
+                    .FirstOrDefault(_ => _.HorseData[0].Number == horseNum);
+
+                if (currentPlaceOdds == null || currentWinOdds == null)
+                {
+                    yield return horseAndOddsDatum;
+                    continue;
+                }
+                horseAndOddsDatum.CurrentOdds = $"{currentWinOdds.LowOdds} {currentPlaceOdds.LowOdds}-{currentPlaceOdds.HighOdds}";
+                yield return horseAndOddsDatum;
+            }
+        }
 }
