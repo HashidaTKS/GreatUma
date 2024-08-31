@@ -56,7 +56,7 @@ namespace GreatUma.Domain
             var winOddsList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Win);
             if (placeOddsList == null || winOddsList == null)
             {
-                foreach(var horseAndOddsDatum in horseAndOdds)
+                foreach (var horseAndOddsDatum in horseAndOdds)
                 {
                     yield return horseAndOddsDatum;
                 }
@@ -64,7 +64,7 @@ namespace GreatUma.Domain
             }
             foreach (var horseAndOddsDatum in horseAndOdds)
             {
-                if(!int.TryParse(horseAndOddsDatum.HorseNum, out var horseNum))
+                if (!int.TryParse(horseAndOddsDatum.HorseNum, out var horseNum))
                 {
                     yield return horseAndOddsDatum;
                     continue;
@@ -86,4 +86,5 @@ namespace GreatUma.Domain
                 yield return horseAndOddsDatum;
             }
         }
+    }
 }
