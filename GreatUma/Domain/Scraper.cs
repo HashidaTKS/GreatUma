@@ -531,9 +531,11 @@ namespace GreatUma.Domain
                     var horseCountList = new List<int>();
                     var courseLengthList = new List<int>();
                     var courseTypeList = new List<CourseType>();
+                    var titleList = new List<string>();
 
                     foreach (var item in raceListDataListCollection[i].GetElementsByClassName("RaceList_ItemContent"))
                     {
+                        var textForTitle = item.GetElementsByClassName("ItemTitle").FirstOrDefault().TextContent.Replace("\r", "").Replace("\n", "");
                         var textForData = item.GetElementsByClassName("RaceData").FirstOrDefault().TextContent.Replace("\r", "").Replace("\n", "");
                         var regexForData = new Regex(@".*?(\d\d):(\d\d).*?(芝|ダ)(\d+)m.*?(\d+)頭.*?");
                         var matchForData = regexForData.Match(textForData);
@@ -564,9 +566,10 @@ namespace GreatUma.Domain
                         horseCountList.Add(horseNumber);
                         courseTypeList.Add(courseType == "ダ" ? CourseType.Dirt : CourseType.Grass);
                         courseLengthList.Add(courseLength);
+                        titleList.Add(textForTitle);
                     }
 
-                    raceUrlInfoList.Add(new HoldingDatum(regionName, numberOfHeld, numberOfDay, raceDate, startTimeList, horseCountList, courseLengthList, courseTypeList));
+                    raceUrlInfoList.Add(new HoldingDatum(regionName, numberOfHeld, numberOfDay, raceDate, startTimeList, horseCountList, courseLengthList, courseTypeList, titleList));
                 }
                 return new HoldingInformation(raceUrlInfoList);
             }

@@ -54,15 +54,78 @@ namespace GreatUma.Domain.Tests
                               15,
                               16
                     },
-                    null,
-                    null),
+                    //Dummy
+                    new List<int>()
+                    {
+                              1000,
+                              1000,
+                              1000,
+                              1000,
+                              1000,
+                              1000,
+                              1000,
+                              1000,
+                              1000,
+                              1000,
+                              1000,
+                              1000
+                    },
+                    //Dummy
+                    new List<CourseType>()
+                    {
+                              CourseType.Grass,
+                              CourseType.Grass,
+                              CourseType.Grass,
+                              CourseType.Grass,
+                              CourseType.Grass,
+                              CourseType.Grass,
+                              CourseType.Grass,
+                              CourseType.Grass,
+                              CourseType.Grass,
+                              CourseType.Grass,
+                              CourseType.Grass,
+                              CourseType.Grass
+                    },
+                    //Dummy
+                    new List<string>()
+                    {
+                              "未勝利",
+                              "未勝利",
+                              "未勝利",
+                              "未勝利",
+                              "未勝利",
+                              "未勝利",
+                              "未勝利",
+                              "未勝利",
+                              "未勝利",
+                              "未勝利",
+                              "未勝利",
+                              "未勝利"
+                    }),
                 1);
             var betDatum = new BetDatum(raceData, new List<int>() { 1 }, 100, 1.1, 1.1, Utils.TicketType.Win);
             //// テスト時は実際にログイン情報を指定する。
             //// ログイン情報はコミットしないように注意。
             var loginConfig = new LoginConfig()
             {
+            };
+            var purchaser = new AutoPurchaser(loginConfig);
+            purchaser.Purchase(new List<BetDatum>() { betDatum });
+            //Assert.Fail();
+        }
 
+        [TestMethod]
+        public void PurchaseTestToday()
+        {
+            var scraper = new Scraper();
+            var date = DateTime.Today;
+            var holdingInformation = scraper.GetHoldingInformation(date, Utils.RegionType.Central);
+            var raceData = new RaceData(holdingInformation.HoldingData[0], 5);
+            var betDatum = new BetDatum(raceData, new List<int>() { 1 }, 100, 1.1, 1.1, Utils.TicketType.Win);
+            //// テスト時は実際にログイン情報を指定する。
+            //// ログイン情報はコミットしないように注意。
+            var loginConfig = new LoginConfig()
+            {
             };
             var purchaser = new AutoPurchaser(loginConfig);
             purchaser.Purchase(new List<BetDatum>() { betDatum });

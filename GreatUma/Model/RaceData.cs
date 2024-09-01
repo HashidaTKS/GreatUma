@@ -31,6 +31,9 @@ namespace GreatUma.Models
         [DataMember]
         public CourseType CourseType { get; set; }
 
+        [DataMember]
+        public string Title { get; set; }
+
 
         public string NumberOfHeldAsUrlString => HoldingDatum.NumberOfHeld.ToString().PadLeft(2, '0');
         public string NumberOfDayAsUrlString => HoldingDatum.NumberOfDay.ToString().PadLeft(2, '0');
@@ -45,6 +48,7 @@ namespace GreatUma.Models
             HorseCount = HoldingDatum.HorseCountList[raceNumber - 1];
             CourseLength = HoldingDatum.CourseLengthList[raceNumber - 1];
             CourseType = HoldingDatum.CourseTypeList[raceNumber - 1];
+            Title = HoldingDatum.TitleList[raceNumber - 1];
         }
 
         private string GetRaceIdString()

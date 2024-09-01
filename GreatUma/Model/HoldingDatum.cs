@@ -46,11 +46,15 @@ namespace GreatUma.Models
         [DataMember]
         public List<CourseType> CourseTypeList { get; set; }
 
+        [DataMember]
+        public List<string> TitleList { get; set; }
+
         public int TotalRaceCount => StartTimeList.Count;
 
         public bool HasFullData => !string.IsNullOrEmpty(Region.RegionId) && NumberOfHeld > 0 && NumberOfDay > 0 && HeldDate > DateTime.MinValue && StartTimeList?.Count > 0;
 
-        public HoldingDatum(HoldingRegion region, int numberOfHeld, int numberOfDay, DateTime heldDate, List<DateTime> startTimeList, List<int> horseCountList, List<int> courseLengthList, List<CourseType> courseTypeList)
+        public HoldingDatum(HoldingRegion region, int numberOfHeld, int numberOfDay, DateTime heldDate, List<DateTime> startTimeList, 
+            List<int> horseCountList, List<int> courseLengthList, List<CourseType> courseTypeList, List<string> titleList)
         {
             Region = region;
             NumberOfHeld = numberOfHeld;
@@ -60,10 +64,11 @@ namespace GreatUma.Models
             HorseCountList = horseCountList;
             CourseLengthList = courseLengthList;
             CourseTypeList = courseTypeList;
+            TitleList = titleList;
         }
 
-        public HoldingDatum(string regionName,int numberOfHeld, int numberOfDay, DateTime heldDate, List<DateTime> startTimeList, List<int> horseCountList, List<int> courseLengthList, List<CourseType> courseTypeList) 
-            : this(Utility.GetRegionFromName(regionName), numberOfHeld, numberOfDay, heldDate, startTimeList, horseCountList, courseLengthList, courseTypeList)
+        public HoldingDatum(string regionName,int numberOfHeld, int numberOfDay, DateTime heldDate, List<DateTime> startTimeList, List<int> horseCountList, List<int> courseLengthList, List<CourseType> courseTypeList, List<string> titleList) 
+            : this(Utility.GetRegionFromName(regionName), numberOfHeld, numberOfDay, heldDate, startTimeList, horseCountList, courseLengthList, courseTypeList, titleList)
         {
         }
 
