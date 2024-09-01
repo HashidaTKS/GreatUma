@@ -11,8 +11,10 @@ namespace GreatUma.Model
         {
             [DisplayName("発送時刻")]
             public DateTime StartTime { get; set; }
-            [DisplayName("クラス")]
-            public string RaceClass { get; set; }
+            [DisplayName("競馬場")]
+            public string Region { get; set; }
+            [DisplayName("タイトル")]
+            public string Title { get; set; }
             [DisplayName("コース")]
             public string Course { get; set; }
             [DisplayName("馬番")]

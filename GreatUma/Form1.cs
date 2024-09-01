@@ -33,7 +33,7 @@ namespace GreatUma
             BindingList.Add(new HorseAndOddsCondition()
             {
                 StartTime = DateTime.Now,
-                RaceClass = "–¢Ÿ—˜",
+                Title = "–¢Ÿ—˜",
                 Course = "Å 1500",
                 Jocky = "•–L",
                 MidnightOdds = "1.4 1.1-1.2",
@@ -46,6 +46,7 @@ namespace GreatUma
         {
             var scraper = new Scraper();
             var date = DateTime.Today;
+            var targets = new TargetSelector(scraper, date);
             var acrual = scraper.GetHoldingInformation(date, Utils.RegionType.Central);
             var raceData = new RaceData(acrual.HoldingData[0], 1);
             var winList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Win);

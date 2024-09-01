@@ -3,15 +3,52 @@ using System.Collections.Generic;
 using System.Linq;
 using GreatUma.Models;
 using GreatUma.Model;
+using System.Security.Policy;
 
 namespace GreatUma.Domain
 {
-    public class TargetSelector()
+    public class TargetSelector
     {
         private static double TargetPlaceOdds = 1.1;
 
-        public IEnumerable<HorseAndOddsCondition> GetTargets(Scraper scraper, RaceData raceData)
+        private Scraper Scraper {  get; set; }
+        private DateTime TargetDate { get; set; }
+
+        public TargetSelector(Scraper scraper, DateTime targetDate)
         {
+            this.Scraper = scraper;
+            this.TargetDate = targetDate;
+        }
+
+        public IEnumerable<(RaceData, List<HorseAndOddsCondition>)> GetTargets(DateTime currentTime)
+        {
+            var scraper = this.Scraper;
+            var targetDate = this.TargetDate;
+            var holdingInformation = scraper.GetHoldingInformation(targetDate, RegionType.Central);
+            if (holdingInformation == null)
+            {
+                yield break;
+            }
+            foreach(var holdingDatum in holdingInformation.HoldingData)
+            {
+                var totalCount = holdingDatum.TotalRaceCount;
+                for(var i = 0; i < totalCount; i++)
+                {
+                    var startTime = holdingDatum.StartTimeList[i];
+                    if (startTime < currentTime)
+                    {
+                        continue;
+                    }
+                    var raceData = new RaceData(holdingDatum, i + 1);
+                    var horseAndOddsConditionList = GetTargets(raceData).ToList();
+                    yield return (raceData, horseAndOddsConditionList);
+                }
+            }
+        }
+
+        public IEnumerable<HorseAndOddsCondition> GetTargets(RaceData raceData)
+        {
+            var scraper = this.Scraper;
             var placeOddsList = scraper.GetOdds(raceData, Utils.TicketType.Place);
             var winOddsList = scraper.GetOdds(raceData, Utils.TicketType.Win);
             var horseData = scraper.GetHorseInfo(raceData);
@@ -39,7 +76,8 @@ namespace GreatUma.Domain
                 yield return new HorseAndOddsCondition()
                 {
                     StartTime = raceData.StartTime,
-                    RaceClass = "",
+                    Region = raceData.HoldingDatum.Region.RegionName,
+                    Title = raceData.Title,
                     Course = raceData.CourseType.ToString(),
                     HorseNum = horseNumberForOdds.ToString(),
                     Jocky = horseDatum.Jockey,
@@ -47,43 +85,6 @@ namespace GreatUma.Domain
                     CurrentOdds = $"{mostPopularWin.LowOdds} {mostPopularPlace.LowOdds}-{mostPopularPlace.HighOdds}",
                     PurchaseCondition = -1,
                 };
-            }
-        }
-
-        public IEnumerable<HorseAndOddsCondition> UpdateRealtimeOdds(Scraper scraper, RaceData raceData, IEnumerable<HorseAndOddsCondition> horseAndOdds)
-        {
-            var placeOddsList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Place);
-            var winOddsList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Win);
-            if (placeOddsList == null || winOddsList == null)
-            {
-                foreach (var horseAndOddsDatum in horseAndOdds)
-                {
-                    yield return horseAndOddsDatum;
-                }
-                yield break;
-            }
-            foreach (var horseAndOddsDatum in horseAndOdds)
-            {
-                if (!int.TryParse(horseAndOddsDatum.HorseNum, out var horseNum))
-                {
-                    yield return horseAndOddsDatum;
-                    continue;
-                }
-                // 複勝のオッズなので、馬は一頭。（馬連なら二頭、三連複なら三頭になる。）
-                var currentPlaceOdds = placeOddsList
-                    .Where(_ => _.HorseData.Count == 1)?
-                    .FirstOrDefault(_ => _.HorseData[0].Number == horseNum);
-                var currentWinOdds = placeOddsList
-                    .Where(_ => _.HorseData.Count == 1)?
-                    .FirstOrDefault(_ => _.HorseData[0].Number == horseNum);
-
-                if (currentPlaceOdds == null || currentWinOdds == null)
-                {
-                    yield return horseAndOddsDatum;
-                    continue;
-                }
-                horseAndOddsDatum.CurrentOdds = $"{currentWinOdds.LowOdds} {currentPlaceOdds.LowOdds}-{currentPlaceOdds.HighOdds}";
-                yield return horseAndOddsDatum;
             }
         }
     }
