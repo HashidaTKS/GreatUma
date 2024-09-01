@@ -33,9 +33,11 @@ namespace GreatUma
             BindingList.Add(new HorseAndOddsCondition()
             {
                 StartTime = DateTime.Now,
+                Region = "•Ÿ“‡",
                 Title = "–¢Ÿ—˜",
                 Course = "Å 1500",
                 Jocky = "•–L",
+                HorseNum = "3",
                 MidnightOdds = "1.4 1.1-1.2",
                 CurrentOdds = "1.3 1.1-1.1",
                 PurchaseCondition = 100

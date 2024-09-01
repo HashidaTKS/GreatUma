@@ -12,14 +12,25 @@ namespace GreatUma.Domain
         private static double TargetPlaceOdds = 1.1;
 
         private Scraper Scraper { get; set; }
-        private DateTime TargetDate { get; set; }
-
+        internal DateTime TargetDate { get; set; }
         private Dictionary<RaceData, List<HorseAndOddsCondition>> TargetDictionary { get; set; } = new Dictionary<RaceData, List<HorseAndOddsCondition>>();
+
+        public bool IsInitialized { get; set; }
 
         public TargetManager(Scraper scraper, DateTime targetDate)
         {
             this.Scraper = scraper;
             this.TargetDate = targetDate;
+        }
+
+        public void Initialize()
+        {
+            if (IsInitialized)
+            {
+                return;
+            }
+            SetTargets(TargetDate);
+            this.IsInitialized = true;
         }
 
         /// <summary>
@@ -41,7 +52,7 @@ namespace GreatUma.Domain
         public void SetTargets(DateTime currentTime)
         {
             var selector = new TargetSelector(this.Scraper, this.TargetDate);
-            var targets = selector.GetTargets(currentTime).ToList();
+            var targets = selector.GetTargets(currentTime)?.ToList() ?? new List<(RaceData, List<HorseAndOddsCondition>)>();
             var targetDictionary = targets.ToDictionary(_ => _.Item1, _ => _.Item2);
             this.TargetDictionary = targetDictionary;
         }
