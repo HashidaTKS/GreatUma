@@ -7,9 +7,14 @@ namespace GreatUma
 {
     public partial class Form1 : Form
     {
-        private BindingList<HorseAndOddsCondition> BindingList = new BindingList<HorseAndOddsCondition>();
-        private BindingSource BindingSource = new BindingSource();
-        private List<HorseAndOddsCondition> HorseAndOddsConditionList = new List<HorseAndOddsCondition>();
+        private BindingList<HorseAndOddsCondition> BindingList { get; } = new BindingList<HorseAndOddsCondition>();
+        private BindingSource BindingSource { get; } = new BindingSource();
+        private List<HorseAndOddsCondition> HorseAndOddsConditionList { get; } = new List<HorseAndOddsCondition>();
+        private AutoPurchaserMainTask AutoPurchaserMainTask { get; } = new AutoPurchaserMainTask();
+        private TargetManagementTask TargetManagementTask { get; } = new TargetManagementTask();
+
+        private bool IsAutoUpdating { get; set; }
+        private bool IsAutoPurchasing { get; set; }
 
         public Form1()
         {
@@ -46,13 +51,9 @@ namespace GreatUma
 
         private void UpdateButton_Click(object sender, EventArgs e)
         {
-            var scraper = new Scraper();
-            var date = DateTime.Today;
-            var targets = new TargetSelector(scraper, date);
-            var acrual = scraper.GetHoldingInformation(date, Utils.RegionType.Central);
-            var raceData = new RaceData(acrual.HoldingData[0], 1);
-            var winList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Win);
-            var placeList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Place);
+            TargetManagementTask.Run();
+            Update.Enabled = false;
+            IsAutoUpdating = true;
         }
 
         private void label2_Click(object sender, EventArgs e)
@@ -71,6 +72,74 @@ namespace GreatUma
         {
             var loginConfigForm = new LoginConfigForm();
             loginConfigForm.ShowDialog();
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            if (IsAutoUpdating)
+            {
+                Update.Enabled = false;
+                if (!TargetManagementTask.Running)
+                {
+                    var currentConditionList = TargetManagementTask.GetHorseAndOddsCondition();
+                    BindingList.Clear();
+                    foreach (var currentCondition in currentConditionList)
+                    {
+                        BindingList.Add(currentCondition);
+                    }
+                    TargetManagementTask.Run();
+                }
+            }
+            else
+            {
+                if (TargetManagementTask.Running)
+                {
+                    Update.Enabled = false;
+                }
+                else
+                {
+                    Update.Enabled = true;
+                }
+            }
+            if (IsAutoPurchasing)
+            {
+                button6.Enabled = false;
+                if (!AutoPurchaserMainTask.Running)
+                {
+                    AutoPurchaserMainTask.Run();
+                }
+            }
+            else
+            {
+                if (AutoPurchaserMainTask.Running)
+                {
+                    button6.Enabled = false;
+                }
+                else
+                {
+                    button6.Enabled = true;
+                }
+            }
+
+        }
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            TargetManagementTask.Stop();
+            IsAutoUpdating = false;
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            AutoPurchaserMainTask.Run();
+            button6.Enabled = false;
+            IsAutoPurchasing = true;
+        }
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            AutoPurchaserMainTask.Stop();
+            IsAutoPurchasing = false;
         }
     }
 }

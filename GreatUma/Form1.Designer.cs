@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            components = new System.ComponentModel.Container();
             dataGridView1 = new DataGridView();
             Update = new Button();
             label1 = new Label();
@@ -43,6 +44,10 @@
             button2 = new Button();
             button3 = new Button();
             textBox2 = new TextBox();
+            timer1 = new System.Windows.Forms.Timer(components);
+            button4 = new Button();
+            button5 = new Button();
+            button6 = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
@@ -59,11 +64,11 @@
             // 
             // Update
             // 
-            Update.Location = new Point(806, 415);
+            Update.Location = new Point(668, 415);
             Update.Name = "Update";
             Update.Size = new Size(75, 23);
             Update.TabIndex = 1;
-            Update.Text = "更新";
+            Update.Text = "自動更新";
             Update.UseVisualStyleBackColor = true;
             Update.Click += UpdateButton_Click;
             // 
@@ -183,11 +188,50 @@
             textBox2.Size = new Size(100, 23);
             textBox2.TabIndex = 15;
             // 
+            // timer1
+            // 
+            timer1.Enabled = true;
+            timer1.Interval = 60000;
+            timer1.Tick += timer1_Tick;
+            // 
+            // button4
+            // 
+            button4.Location = new Point(749, 415);
+            button4.Name = "button4";
+            button4.Size = new Size(92, 23);
+            button4.TabIndex = 16;
+            button4.Text = "自動更新停止";
+            button4.UseVisualStyleBackColor = true;
+            button4.Click += button4_Click;
+            // 
+            // button5
+            // 
+            button5.Location = new Point(538, 415);
+            button5.Name = "button5";
+            button5.Size = new Size(92, 23);
+            button5.TabIndex = 18;
+            button5.Text = "自動購入停止";
+            button5.UseVisualStyleBackColor = true;
+            button5.Click += button5_Click;
+            // 
+            // button6
+            // 
+            button6.Location = new Point(457, 415);
+            button6.Name = "button6";
+            button6.Size = new Size(75, 23);
+            button6.TabIndex = 17;
+            button6.Text = "自動購入";
+            button6.UseVisualStyleBackColor = true;
+            button6.Click += button6_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(973, 450);
+            Controls.Add(button5);
+            Controls.Add(button6);
+            Controls.Add(button4);
             Controls.Add(textBox2);
             Controls.Add(button3);
             Controls.Add(button2);
@@ -230,5 +274,9 @@
         private Button button2;
         private Button button3;
         private TextBox textBox2;
+        private System.Windows.Forms.Timer timer1;
+        private Button button4;
+        private Button button5;
+        private Button button6;
     }
 }
