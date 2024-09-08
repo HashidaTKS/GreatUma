@@ -11,6 +11,7 @@ using System.Threading;
 using GreatUma.Utils;
 using GreatUma.Infrastructures;
 using GreatUma.Models;
+using System.Text.RegularExpressions;
 
 namespace GreatUma.Domain
 {
@@ -72,8 +73,57 @@ namespace GreatUma.Domain
             return true;
         }
 
+        public int GetCurrentPrice(RaceData raceData)
+        {
+            return GetCurrentPrice(Chrome, raceData);
+        }
+        
+        public int GetCurrentPrice(ChromeDriver chrome, RaceData raceData)
+        {
+            var url = raceData.ToNetKeibaIpatPageUrlString();
+            Chrome.Url = url;
+            //画面の切り替わり完了待ち
+            Thread.Sleep(1 * 1000);
+
+            LoginToNetkeibaIfNeeded(Chrome);
+
+            var depositWithdrawalButton = Chrome.FindElement(By.Id("ipat_dialog_menu"));
+
+            depositWithdrawalButton.Click();
+            Thread.Sleep(3 * 1000);
+
+            Chrome.SwitchTo().Window(Chrome.WindowHandles.Last());
+            try
+            {
+                GoNextIfIpatCooperationDialogIsDisplayed(Chrome);
+                LoginToIpat(Chrome);
+
+                var priceElement = Chrome.FindElement(By.Id("spatapatPrice"));
+                var text = priceElement.Text;
+                var regexForData = new Regex(@"購入限度額 (.*)円");
+                var matchForData = regexForData.Match(text);
+                if (!matchForData.Success)
+                {
+                    return 0;
+                }
+                var priceText = matchForData.Groups[1].Value.Replace(",", "").Trim();
+                if (!int.TryParse(priceText, out var price))
+                {
+                    return 0;
+                }
+                return price;
+            }
+            finally
+            {
+                if(Chrome.WindowHandles.Count > 1)
+                {
+                    Chrome.Close();
+                }
+            }
+        }
+
         /// <summary>
-        /// 現状は馬連のみに対応。ある一つのレースへの複数のベットを行う。
+        /// ある一つのレースへの複数のベットを行う。現状は3連単、三連複非対応。
         /// </summary>
         /// <param name="betInfoList"></param>
         private bool PurchaseAtNetKeiba(List<BetDatum> betInfoList)
@@ -126,12 +176,22 @@ namespace GreatUma.Domain
                 Thread.Sleep(3 * 1000);
 
                 Chrome.SwitchTo().Window(Chrome.WindowHandles.Last());
-                //var frameElement = Chrome.FindElement(By.ClassName("cboxIframe"));
-                //Chrome.SwitchTo().Frame(frameElement);
+                try
+                {
+                    //var frameElement = Chrome.FindElement(By.ClassName("cboxIframe"));
+                    //Chrome.SwitchTo().Frame(frameElement);
 
-                GoNextIfIpatCooperationDialogIsDisplayed(Chrome);
-                LoginToIpat(Chrome);
-                return PurchaseAtIpat(Chrome, betInfoList);
+                    GoNextIfIpatCooperationDialogIsDisplayed(Chrome);
+                    LoginToIpat(Chrome);
+                    return PurchaseAtIpat(Chrome, betInfoList);
+                }
+                finally
+                {
+                    if (Chrome.WindowHandles.Count > 1)
+                    {
+                        Chrome.Close();
+                    }
+                }
             }
             catch(Exception ex)
             {
