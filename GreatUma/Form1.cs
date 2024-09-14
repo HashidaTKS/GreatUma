@@ -1,4 +1,5 @@
 using GreatUma.Domain;
+using GreatUma.Infrastructures;
 using GreatUma.Model;
 using GreatUma.Models;
 using OpenQA.Selenium.DevTools.V124.WebAudio;
@@ -144,6 +145,68 @@ namespace GreatUma
         {
             AutoPurchaserMainTask.Stop();
             IsAutoPurchasing = false;
+        }
+
+        private void button7_Click(object sender, EventArgs e)
+        {
+            //var targetCondition = BindingList.LastOrDefault();
+            //if (targetCondition == null)
+            //{
+            //    MessageBox.Show("対象のレースがないため残高を取得をスキップします。");
+            //    return;
+            //}
+            //var loginRepo = new LoginConfigRepository();
+            //var loginData = loginRepo.ReadAll();
+            //if (loginData == null)
+            //{
+            //    MessageBox.Show("ログイン情報がないため残高を取得できません。");
+            //    return;
+            //}
+            //var autoPurchaser = new AutoPurchaser(loginData);
+            //int currentPrice = 0;
+            //try
+            //{
+            //    currentPrice = autoPurchaser.GetCurrentPrice(targetCondition.RaceData);
+            //}
+            //catch (Exception ex)
+            //{
+            //    MessageBox.Show("残高取得中にエラーが発生しました。");
+            //}
+            //textBox2.Text = currentPrice.ToString();
+            textBox2.Text = "5000";
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            SetPurchasePrice();
+        }
+
+        private void SetPurchasePrice()
+        {
+            if (int.TryParse(textBox1.Text, out int price))
+            {
+                numericUpDown2.Value = price / 100 * 100;
+            }
+        }
+
+        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        {
+            SetPriceRatio();
+        }
+
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            SetPriceRatio();
+        }
+        
+        private void SetPriceRatio()
+        {
+            if (double.TryParse(textBox2.Text, out double price))
+            {
+                var ratio = (double)numericUpDown1.Value;
+                var value = price * ratio / 100.0;
+                textBox1.Text = ((int)Math.Ceiling(value)).ToString();
+            }
         }
     }
 }
