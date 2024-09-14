@@ -1,6 +1,7 @@
 using GreatUma.Domain;
 using GreatUma.Model;
 using GreatUma.Models;
+using OpenQA.Selenium.DevTools.V124.WebAudio;
 using System.ComponentModel;
 
 namespace GreatUma
@@ -12,6 +13,8 @@ namespace GreatUma
         private List<HorseAndOddsCondition> HorseAndOddsConditionList { get; } = new List<HorseAndOddsCondition>();
         private AutoPurchaserMainTask AutoPurchaserMainTask { get; } = new AutoPurchaserMainTask();
         private TargetManagementTask TargetManagementTask { get; } = new TargetManagementTask();
+        private TimeSpan CurrentOddsCheckSpan { get; } = new TimeSpan(0, 10, 0);
+        private DateTime LastCheckTime { get; set; } = DateTime.MinValue;
 
         private bool IsAutoUpdating { get; set; }
         private bool IsAutoPurchasing { get; set; }
@@ -79,7 +82,8 @@ namespace GreatUma
             if (IsAutoUpdating)
             {
                 Update.Enabled = false;
-                if (!TargetManagementTask.Running)
+                if (!TargetManagementTask.Running &&
+                    DateTime.Now - LastCheckTime > CurrentOddsCheckSpan)
                 {
                     var currentConditionList = TargetManagementTask.GetHorseAndOddsCondition();
                     BindingList.Clear();

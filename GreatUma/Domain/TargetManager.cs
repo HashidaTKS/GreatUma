@@ -9,11 +9,11 @@ namespace GreatUma.Domain
 {
     public class TargetManager
     {
-        private static double TargetPlaceOdds = 1.1;
+        private static double TargetPlaceOdds = 1.5;
 
         private Scraper Scraper { get; set; }
         internal DateTime TargetDate { get; set; }
-        private Dictionary<RaceData, List<HorseAndOddsCondition>> TargetDictionary { get; set; } = new Dictionary<RaceData, List<HorseAndOddsCondition>>();
+        internal List<HorseAndOddsCondition> TargetList { get; private set; } = new List<HorseAndOddsCondition>();
 
         public bool IsInitialized { get; set; }
 
@@ -29,74 +29,56 @@ namespace GreatUma.Domain
             {
                 return;
             }
-            SetTargets(TargetDate);
             this.IsInitialized = true;
-        }
-
-        /// <summary>
-        /// 現在の対象一覧を返却する。
-        /// </summary>
-        /// <returns></returns>
-        public IEnumerable<HorseAndOddsCondition> GetConditions()
-        {
-            // TargetDictionaryを平坦化し、HorseAndOddsConditionの情報のみを返却する。
-            foreach (var horseAndOddsConditionList in this.TargetDictionary.Values)
-            {
-                foreach(var horseAndOddsCondition in horseAndOddsConditionList)
-                {
-                    yield return horseAndOddsCondition;
-                }
-            }
+            SetTargets(TargetDate);
         }
 
         public void SetTargets(DateTime currentTime)
         {
             var selector = new TargetSelector(this.Scraper, this.TargetDate);
-            var targets = selector.GetTargets(currentTime)?.ToList() ?? new List<(RaceData, List<HorseAndOddsCondition>)>();
-            var targetDictionary = targets.ToDictionary(_ => _.Item1, _ => _.Item2);
-            this.TargetDictionary = targetDictionary;
+            this.TargetList = selector.GetTargets(currentTime)?.ToList() ?? new List<HorseAndOddsCondition>();
         }
 
         public void Update(DateTime currentTime)
         {
-            this.TargetDictionary = this.TargetDictionary.
-                Where(_ => _.Key.StartTime > currentTime)?.
-                ToDictionary() ?? new Dictionary<RaceData, List<HorseAndOddsCondition>>();
+            this.TargetList.RemoveAll(_ => _.RaceData.StartTime > currentTime);
+            if (currentTime.Date > TargetDate)
+            {
+                SetTargets(TargetDate);
+            }
             this.UpdateRealtimeOdds();
         }
 
         public void UpdateRealtimeOdds()
         {
             var scraper = this.Scraper;
-            foreach (var raceData in this.TargetDictionary.Keys)
+            foreach (var horseAndOddsCondition in this.TargetList)
             {
-                var horseAndOdds = this.TargetDictionary[raceData];
+                var raceData = horseAndOddsCondition.RaceData;
                 var placeOddsList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Place);
                 var winOddsList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Win);
                 if (placeOddsList == null || winOddsList == null)
                 {
                     continue;
                 }
-                foreach (var horseAndOddsDatum in horseAndOdds)
+                if (!int.TryParse(horseAndOddsCondition.HorseNum, out var horseNum))
                 {
-                    if (!int.TryParse(horseAndOddsDatum.HorseNum, out var horseNum))
-                    {
-                        continue;
-                    }
-                    // 複勝のオッズなので、馬は一頭。（馬連なら二頭、三連複なら三頭になる。）
-                    var currentPlaceOdds = placeOddsList
-                        .Where(_ => _.HorseData.Count == 1)?
-                        .FirstOrDefault(_ => _.HorseData[0].Number == horseNum);
-                    var currentWinOdds = placeOddsList
-                        .Where(_ => _.HorseData.Count == 1)?
-                        .FirstOrDefault(_ => _.HorseData[0].Number == horseNum);
-
-                    if (currentPlaceOdds == null || currentWinOdds == null)
-                    {
-                        continue;
-                    }
-                    horseAndOddsDatum.CurrentOdds = $"{currentWinOdds.LowOdds} {currentPlaceOdds.LowOdds}-{currentPlaceOdds.HighOdds}";
+                    continue;
                 }
+                // 複勝のオッズなので、馬は一頭。（馬連なら二頭、三連複なら三頭になる。）
+                var currentPlaceOdds = placeOddsList
+                    .Where(_ => _.HorseData.Count == 1)?
+                    .FirstOrDefault(_ => _.HorseData[0].Number == horseNum);
+                var currentWinOdds = placeOddsList
+                    .Where(_ => _.HorseData.Count == 1)?
+                    .FirstOrDefault(_ => _.HorseData[0].Number == horseNum);
+
+                if (currentPlaceOdds == null || currentWinOdds == null)
+                {
+                    continue;
+                }
+                horseAndOddsCondition.CurrentOdds = $"単勝:{currentWinOdds.LowOdds} 複勝:{currentPlaceOdds.LowOdds}-{currentPlaceOdds.HighOdds}";
+
             }
         }
     }

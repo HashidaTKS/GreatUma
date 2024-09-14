@@ -1,4 +1,5 @@
-﻿using System;
+﻿using GreatUma.Models;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
@@ -27,5 +28,7 @@ namespace GreatUma.Model
             public string CurrentOdds { get; set; }
             [DisplayName("3分前購入条件")]
             public double PurchaseCondition { get; set; }
+            [Browsable(false)]
+            public RaceData RaceData { get; set; }
         }
 }

@@ -79,7 +79,7 @@ namespace GreatUma.Domain
         {
             lock (LockObject)
             {
-                return TargetManager.GetConditions().ToList();
+                return TargetManager.TargetList;
             }
         }
 
