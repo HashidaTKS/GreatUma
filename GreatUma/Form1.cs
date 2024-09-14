@@ -56,59 +56,58 @@ namespace GreatUma
         private void UpdateButton_Click(object sender, EventArgs e)
         {
             TargetManagementTask.Run();
-            Update.Enabled = false;
+            buttonStartUpdate.Enabled = false;
             IsAutoUpdating = true;
         }
 
-        private void label2_Click(object sender, EventArgs e)
+        private void NumericUpDownPurchasePrice_ValueChanged(object sender, EventArgs e)
         {
-
-        }
-
-        private void numericUpDown2_ValueChanged(object sender, EventArgs e)
-        {
-            decimal value = numericUpDown2.Value;
+            decimal value = numericUpDownPurchasePrice.Value;
             decimal roundedValue = Math.Floor(value / 100) * 100;
-            numericUpDown2.Value = roundedValue;
+            numericUpDownPurchasePrice.Value = roundedValue;
         }
 
-        private void button2_Click(object sender, EventArgs e)
+        private void ButtonLoginConfig_Click(object sender, EventArgs e)
         {
             var loginConfigForm = new LoginConfigForm();
             loginConfigForm.ShowDialog();
         }
 
-        private void timer1_Tick(object sender, EventArgs e)
+        private void Timer1_Tick(object sender, EventArgs e)
         {
             if (IsAutoUpdating)
             {
-                Update.Enabled = false;
-                if (!TargetManagementTask.Running &&
-                    DateTime.Now - LastCheckTime > CurrentOddsCheckSpan)
+                buttonStartUpdate.Enabled = false;
+                if (!TargetManagementTask.Running)
                 {
-                    var currentConditionList = TargetManagementTask.GetHorseAndOddsCondition();
-                    BindingList.Clear();
-                    foreach (var currentCondition in currentConditionList)
-                    {
-                        BindingList.Add(currentCondition);
-                    }
-                    TargetManagementTask.Run();
+                    IsAutoUpdating = false;
                 }
+                //if (!TargetManagementTask.Running &&
+                //    DateTime.Now - LastCheckTime > CurrentOddsCheckSpan)
+                //{
+                //    var currentConditionList = TargetManagementTask.GetHorseAndOddsCondition();
+                //    BindingList.Clear();
+                //    foreach (var currentCondition in currentConditionList)
+                //    {
+                //        BindingList.Add(currentCondition);
+                //    }
+                //    TargetManagementTask.Run();
+                //}
             }
-            else
+            if (!IsAutoUpdating)
             {
                 if (TargetManagementTask.Running)
                 {
-                    Update.Enabled = false;
+                    buttonStartUpdate.Enabled = false;
                 }
                 else
                 {
-                    Update.Enabled = true;
+                    buttonStartUpdate.Enabled = true;
                 }
             }
             if (IsAutoPurchasing)
             {
-                button6.Enabled = false;
+                buttonStartAutoPurchase.Enabled = false;
                 if (!AutoPurchaserMainTask.Running)
                 {
                     AutoPurchaserMainTask.Run();
@@ -118,94 +117,89 @@ namespace GreatUma
             {
                 if (AutoPurchaserMainTask.Running)
                 {
-                    button6.Enabled = false;
+                    buttonStartAutoPurchase.Enabled = false;
                 }
                 else
                 {
-                    button6.Enabled = true;
+                    buttonStartAutoPurchase.Enabled = true;
                 }
             }
 
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        private void ButtonUpdateStatus_Click(object sender, EventArgs e)
         {
             TargetManagementTask.Stop();
             IsAutoUpdating = false;
         }
 
-        private void button6_Click(object sender, EventArgs e)
+        private void ButtonAutoPurchase_Click(object sender, EventArgs e)
         {
             AutoPurchaserMainTask.Run();
-            button6.Enabled = false;
+            buttonStartAutoPurchase.Enabled = false;
             IsAutoPurchasing = true;
         }
 
-        private void button5_Click(object sender, EventArgs e)
+        private void ButtonStopAutoPurchase_Click(object sender, EventArgs e)
         {
             AutoPurchaserMainTask.Stop();
             IsAutoPurchasing = false;
         }
 
-        private void button7_Click(object sender, EventArgs e)
+        private void ButtonGetPrice_Click(object sender, EventArgs e)
         {
-            //var targetCondition = BindingList.LastOrDefault();
-            //if (targetCondition == null)
-            //{
-            //    MessageBox.Show("対象のレースがないため残高を取得をスキップします。");
-            //    return;
-            //}
-            //var loginRepo = new LoginConfigRepository();
-            //var loginData = loginRepo.ReadAll();
-            //if (loginData == null)
-            //{
-            //    MessageBox.Show("ログイン情報がないため残高を取得できません。");
-            //    return;
-            //}
-            //var autoPurchaser = new AutoPurchaser(loginData);
-            //int currentPrice = 0;
-            //try
-            //{
-            //    currentPrice = autoPurchaser.GetCurrentPrice(targetCondition.RaceData);
-            //}
-            //catch (Exception ex)
-            //{
-            //    MessageBox.Show("残高取得中にエラーが発生しました。");
-            //}
-            //textBox2.Text = currentPrice.ToString();
-            textBox2.Text = "5000";
-        }
-
-        private void button1_Click(object sender, EventArgs e)
-        {
-            SetPurchasePrice();
-        }
-
-        private void SetPurchasePrice()
-        {
-            if (int.TryParse(textBox1.Text, out int price))
+            var targetCondition = BindingList.LastOrDefault();
+            if (targetCondition == null)
             {
-                numericUpDown2.Value = price / 100 * 100;
+                MessageBox.Show("対象のレースがないため残高を取得をスキップします。");
+                return;
+            }
+            var loginRepo = new LoginConfigRepository();
+            var loginData = loginRepo.ReadAll();
+            if (loginData == null)
+            {
+                MessageBox.Show("ログイン情報がないため残高を取得できません。");
+                return;
+            }
+            var autoPurchaser = new AutoPurchaser(loginData);
+            int currentPrice = 0;
+            try
+            {
+                currentPrice = autoPurchaser.GetCurrentPrice(targetCondition.RaceData);
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show("残高取得中にエラーが発生しました。");
+            }
+            textBoxCurrentPrice.Text = currentPrice.ToString();
+            //textBoxCurrentPrice.Text = "5000";
+        }
+
+        private void ButtonSetPurchasePrice_Click(object sender, EventArgs e)
+        {
+            if (int.TryParse(textBoxPriceAppliedRatio.Text, out int price))
+            {
+                numericUpDownPurchasePrice.Value = price / 100 * 100;
             }
         }
 
-        private void numericUpDown1_ValueChanged(object sender, EventArgs e)
+        private void NumericUpDownRatio_ValueChanged(object sender, EventArgs e)
         {
             SetPriceRatio();
         }
 
-        private void textBox2_TextChanged(object sender, EventArgs e)
+        private void TextBoxCurrentPrice_TextChanged(object sender, EventArgs e)
         {
             SetPriceRatio();
         }
         
         private void SetPriceRatio()
         {
-            if (double.TryParse(textBox2.Text, out double price))
+            if (double.TryParse(textBoxCurrentPrice.Text, out double price))
             {
-                var ratio = (double)numericUpDown1.Value;
+                var ratio = (double)numericUpDownRatio.Value;
                 var value = price * ratio / 100.0;
-                textBox1.Text = ((int)Math.Ceiling(value)).ToString();
+                textBoxPriceAppliedRatio.Text = ((int)Math.Ceiling(value)).ToString();
             }
         }
     }

@@ -30,28 +30,28 @@
         {
             components = new System.ComponentModel.Container();
             dataGridView1 = new DataGridView();
-            Update = new Button();
+            buttonStartUpdate = new Button();
             label1 = new Label();
             label2 = new Label();
             label3 = new Label();
-            button1 = new Button();
-            numericUpDown1 = new NumericUpDown();
+            buttonSetPurchasePrice = new Button();
+            numericUpDownRatio = new NumericUpDown();
             label4 = new Label();
-            textBox1 = new TextBox();
+            textBoxPriceAppliedRatio = new TextBox();
             label5 = new Label();
-            numericUpDown2 = new NumericUpDown();
+            numericUpDownPurchasePrice = new NumericUpDown();
             oddsDateTimeLabel = new Label();
-            button2 = new Button();
-            button3 = new Button();
-            textBox2 = new TextBox();
+            buttonLoginConfig = new Button();
+            buttonSaveConfition = new Button();
+            textBoxCurrentPrice = new TextBox();
             timer1 = new System.Windows.Forms.Timer(components);
-            button4 = new Button();
-            button5 = new Button();
-            button6 = new Button();
-            button7 = new Button();
+            buttonStopAutoupdate = new Button();
+            buttonStopAutoPurchase = new Button();
+            buttonStartAutoPurchase = new Button();
+            buttonGetPrice = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown2).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownRatio).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownPurchasePrice).BeginInit();
             SuspendLayout();
             // 
             // dataGridView1
@@ -63,15 +63,15 @@
             dataGridView1.Size = new Size(976, 332);
             dataGridView1.TabIndex = 0;
             // 
-            // Update
+            // buttonStartUpdate
             // 
-            Update.Location = new Point(668, 415);
-            Update.Name = "Update";
-            Update.Size = new Size(75, 23);
-            Update.TabIndex = 1;
-            Update.Text = "自動更新";
-            Update.UseVisualStyleBackColor = true;
-            Update.Click += UpdateButton_Click;
+            buttonStartUpdate.Location = new Point(668, 415);
+            buttonStartUpdate.Name = "buttonStartUpdate";
+            buttonStartUpdate.Size = new Size(75, 23);
+            buttonStartUpdate.TabIndex = 1;
+            buttonStartUpdate.Text = "情報更新";
+            buttonStartUpdate.UseVisualStyleBackColor = true;
+            buttonStartUpdate.Click += UpdateButton_Click;
             // 
             // label1
             // 
@@ -90,7 +90,6 @@
             label2.Size = new Size(108, 15);
             label2.TabIndex = 3;
             label2.Text = "現在オッズ取得時刻:";
-            label2.Click += label2_Click;
             // 
             // label3
             // 
@@ -101,23 +100,23 @@
             label3.TabIndex = 4;
             label3.Text = "投入資金率";
             // 
-            // button1
+            // buttonSetPurchasePrice
             // 
-            button1.Location = new Point(490, 6);
-            button1.Name = "button1";
-            button1.Size = new Size(108, 23);
-            button1.TabIndex = 5;
-            button1.Text = "購入金額に反映";
-            button1.UseVisualStyleBackColor = true;
-            button1.Click += button1_Click;
+            buttonSetPurchasePrice.Location = new Point(490, 6);
+            buttonSetPurchasePrice.Name = "buttonSetPurchasePrice";
+            buttonSetPurchasePrice.Size = new Size(108, 23);
+            buttonSetPurchasePrice.TabIndex = 5;
+            buttonSetPurchasePrice.Text = "購入金額に反映";
+            buttonSetPurchasePrice.UseVisualStyleBackColor = true;
+            buttonSetPurchasePrice.Click += ButtonSetPurchasePrice_Click;
             // 
-            // numericUpDown1
+            // numericUpDownRatio
             // 
-            numericUpDown1.Location = new Point(264, 6);
-            numericUpDown1.Name = "numericUpDown1";
-            numericUpDown1.Size = new Size(69, 23);
-            numericUpDown1.TabIndex = 7;
-            numericUpDown1.ValueChanged += numericUpDown1_ValueChanged;
+            numericUpDownRatio.Location = new Point(264, 6);
+            numericUpDownRatio.Name = "numericUpDownRatio";
+            numericUpDownRatio.Size = new Size(69, 23);
+            numericUpDownRatio.TabIndex = 7;
+            numericUpDownRatio.ValueChanged += NumericUpDownRatio_ValueChanged;
             // 
             // label4
             // 
@@ -128,13 +127,13 @@
             label4.TabIndex = 8;
             label4.Text = "% =";
             // 
-            // textBox1
+            // textBoxPriceAppliedRatio
             // 
-            textBox1.Enabled = false;
-            textBox1.Location = new Point(373, 6);
-            textBox1.Name = "textBox1";
-            textBox1.Size = new Size(100, 23);
-            textBox1.TabIndex = 9;
+            textBoxPriceAppliedRatio.Enabled = false;
+            textBoxPriceAppliedRatio.Location = new Point(373, 6);
+            textBoxPriceAppliedRatio.Name = "textBoxPriceAppliedRatio";
+            textBoxPriceAppliedRatio.Size = new Size(100, 23);
+            textBoxPriceAppliedRatio.TabIndex = 9;
             // 
             // label5
             // 
@@ -145,15 +144,15 @@
             label5.TabIndex = 10;
             label5.Text = "購入金額";
             // 
-            // numericUpDown2
+            // numericUpDownPurchasePrice
             // 
-            numericUpDown2.Increment = new decimal(new int[] { 100, 0, 0, 0 });
-            numericUpDown2.Location = new Point(668, 8);
-            numericUpDown2.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
-            numericUpDown2.Name = "numericUpDown2";
-            numericUpDown2.Size = new Size(111, 23);
-            numericUpDown2.TabIndex = 11;
-            numericUpDown2.ValueChanged += numericUpDown2_ValueChanged;
+            numericUpDownPurchasePrice.Increment = new decimal(new int[] { 100, 0, 0, 0 });
+            numericUpDownPurchasePrice.Location = new Point(668, 8);
+            numericUpDownPurchasePrice.Maximum = new decimal(new int[] { 1000000, 0, 0, 0 });
+            numericUpDownPurchasePrice.Name = "numericUpDownPurchasePrice";
+            numericUpDownPurchasePrice.Size = new Size(111, 23);
+            numericUpDownPurchasePrice.TabIndex = 11;
+            numericUpDownPurchasePrice.ValueChanged += NumericUpDownPurchasePrice_ValueChanged;
             // 
             // oddsDateTimeLabel
             // 
@@ -164,110 +163,110 @@
             oddsDateTimeLabel.TabIndex = 12;
             oddsDateTimeLabel.Text = "-";
             // 
-            // button2
+            // buttonLoginConfig
             // 
-            button2.Location = new Point(12, 415);
-            button2.Name = "button2";
-            button2.Size = new Size(75, 23);
-            button2.TabIndex = 13;
-            button2.Text = "ログイン設定";
-            button2.UseVisualStyleBackColor = true;
-            button2.Click += button2_Click;
+            buttonLoginConfig.Location = new Point(12, 415);
+            buttonLoginConfig.Name = "buttonLoginConfig";
+            buttonLoginConfig.Size = new Size(75, 23);
+            buttonLoginConfig.TabIndex = 13;
+            buttonLoginConfig.Text = "ログイン設定";
+            buttonLoginConfig.UseVisualStyleBackColor = true;
+            buttonLoginConfig.Click += ButtonLoginConfig_Click;
             // 
-            // button3
+            // buttonSaveConfition
             // 
-            button3.Location = new Point(887, 415);
-            button3.Name = "button3";
-            button3.Size = new Size(75, 23);
-            button3.TabIndex = 14;
-            button3.Text = "設定保存";
-            button3.UseVisualStyleBackColor = true;
+            buttonSaveConfition.Location = new Point(887, 415);
+            buttonSaveConfition.Name = "buttonSaveConfition";
+            buttonSaveConfition.Size = new Size(75, 23);
+            buttonSaveConfition.TabIndex = 14;
+            buttonSaveConfition.Text = "設定保存";
+            buttonSaveConfition.UseVisualStyleBackColor = true;
             // 
-            // textBox2
+            // textBoxCurrentPrice
             // 
-            textBox2.Enabled = false;
-            textBox2.Location = new Point(49, 6);
-            textBox2.Name = "textBox2";
-            textBox2.Size = new Size(100, 23);
-            textBox2.TabIndex = 15;
-            textBox2.TextChanged += textBox2_TextChanged;
+            textBoxCurrentPrice.Enabled = false;
+            textBoxCurrentPrice.Location = new Point(49, 6);
+            textBoxCurrentPrice.Name = "textBoxCurrentPrice";
+            textBoxCurrentPrice.Size = new Size(100, 23);
+            textBoxCurrentPrice.TabIndex = 15;
+            textBoxCurrentPrice.TextChanged += TextBoxCurrentPrice_TextChanged;
             // 
             // timer1
             // 
             timer1.Enabled = true;
             timer1.Interval = 60000;
-            timer1.Tick += timer1_Tick;
+            timer1.Tick += Timer1_Tick;
             // 
-            // button4
+            // buttonStopAutoupdate
             // 
-            button4.Location = new Point(749, 415);
-            button4.Name = "button4";
-            button4.Size = new Size(92, 23);
-            button4.TabIndex = 16;
-            button4.Text = "自動更新停止";
-            button4.UseVisualStyleBackColor = true;
-            button4.Click += button4_Click;
+            buttonStopAutoupdate.Location = new Point(749, 415);
+            buttonStopAutoupdate.Name = "buttonStopAutoupdate";
+            buttonStopAutoupdate.Size = new Size(92, 23);
+            buttonStopAutoupdate.TabIndex = 16;
+            buttonStopAutoupdate.Text = "更新停止";
+            buttonStopAutoupdate.UseVisualStyleBackColor = true;
+            buttonStopAutoupdate.Click += ButtonUpdateStatus_Click;
             // 
-            // button5
+            // buttonStopAutoPurchase
             // 
-            button5.Location = new Point(538, 415);
-            button5.Name = "button5";
-            button5.Size = new Size(92, 23);
-            button5.TabIndex = 18;
-            button5.Text = "自動購入停止";
-            button5.UseVisualStyleBackColor = true;
-            button5.Click += button5_Click;
+            buttonStopAutoPurchase.Location = new Point(538, 415);
+            buttonStopAutoPurchase.Name = "buttonStopAutoPurchase";
+            buttonStopAutoPurchase.Size = new Size(92, 23);
+            buttonStopAutoPurchase.TabIndex = 18;
+            buttonStopAutoPurchase.Text = "自動購入停止";
+            buttonStopAutoPurchase.UseVisualStyleBackColor = true;
+            buttonStopAutoPurchase.Click += ButtonStopAutoPurchase_Click;
             // 
-            // button6
+            // buttonStartAutoPurchase
             // 
-            button6.Location = new Point(457, 415);
-            button6.Name = "button6";
-            button6.Size = new Size(75, 23);
-            button6.TabIndex = 17;
-            button6.Text = "自動購入";
-            button6.UseVisualStyleBackColor = true;
-            button6.Click += button6_Click;
+            buttonStartAutoPurchase.Location = new Point(457, 415);
+            buttonStartAutoPurchase.Name = "buttonStartAutoPurchase";
+            buttonStartAutoPurchase.Size = new Size(75, 23);
+            buttonStartAutoPurchase.TabIndex = 17;
+            buttonStartAutoPurchase.Text = "自動購入";
+            buttonStartAutoPurchase.UseVisualStyleBackColor = true;
+            buttonStartAutoPurchase.Click += ButtonAutoPurchase_Click;
             // 
-            // button7
+            // buttonGetPrice
             // 
-            button7.Location = new Point(356, 415);
-            button7.Name = "button7";
-            button7.Size = new Size(75, 23);
-            button7.TabIndex = 19;
-            button7.Text = "残高反映";
-            button7.UseVisualStyleBackColor = true;
-            button7.Click += button7_Click;
+            buttonGetPrice.Location = new Point(356, 415);
+            buttonGetPrice.Name = "buttonGetPrice";
+            buttonGetPrice.Size = new Size(75, 23);
+            buttonGetPrice.TabIndex = 19;
+            buttonGetPrice.Text = "残高反映";
+            buttonGetPrice.UseVisualStyleBackColor = true;
+            buttonGetPrice.Click += ButtonGetPrice_Click;
             // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(973, 450);
-            Controls.Add(button7);
-            Controls.Add(button5);
-            Controls.Add(button6);
-            Controls.Add(button4);
-            Controls.Add(textBox2);
-            Controls.Add(button3);
-            Controls.Add(button2);
+            Controls.Add(buttonGetPrice);
+            Controls.Add(buttonStopAutoPurchase);
+            Controls.Add(buttonStartAutoPurchase);
+            Controls.Add(buttonStopAutoupdate);
+            Controls.Add(textBoxCurrentPrice);
+            Controls.Add(buttonSaveConfition);
+            Controls.Add(buttonLoginConfig);
             Controls.Add(oddsDateTimeLabel);
-            Controls.Add(numericUpDown2);
+            Controls.Add(numericUpDownPurchasePrice);
             Controls.Add(label5);
-            Controls.Add(textBox1);
+            Controls.Add(textBoxPriceAppliedRatio);
             Controls.Add(label4);
-            Controls.Add(numericUpDown1);
-            Controls.Add(button1);
+            Controls.Add(numericUpDownRatio);
+            Controls.Add(buttonSetPurchasePrice);
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
-            Controls.Add(Update);
+            Controls.Add(buttonStartUpdate);
             Controls.Add(dataGridView1);
             Name = "Form1";
             Text = "GreatUma";
             Load += Form1_Load;
             ((System.ComponentModel.ISupportInitialize)dataGridView1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown1).EndInit();
-            ((System.ComponentModel.ISupportInitialize)numericUpDown2).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownRatio).EndInit();
+            ((System.ComponentModel.ISupportInitialize)numericUpDownPurchasePrice).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
@@ -275,24 +274,24 @@
         #endregion
 
         private DataGridView dataGridView1;
-        private Button Update;
+        private Button buttonStartUpdate;
         private Label label1;
         private Label label2;
         private Label label3;
-        private Button button1;
-        private NumericUpDown numericUpDown1;
+        private Button buttonSetPurchasePrice;
+        private NumericUpDown numericUpDownRatio;
         private Label label4;
-        private TextBox textBox1;
+        private TextBox textBoxPriceAppliedRatio;
         private Label label5;
-        private NumericUpDown numericUpDown2;
+        private NumericUpDown numericUpDownPurchasePrice;
         private Label oddsDateTimeLabel;
-        private Button button2;
-        private Button button3;
-        private TextBox textBox2;
+        private Button buttonLoginConfig;
+        private Button buttonSaveConfition;
+        private TextBox textBoxCurrentPrice;
         private System.Windows.Forms.Timer timer1;
-        private Button button4;
-        private Button button5;
-        private Button button6;
-        private Button button7;
+        private Button buttonStopAutoupdate;
+        private Button buttonStopAutoPurchase;
+        private Button buttonStartAutoPurchase;
+        private Button buttonGetPrice;
     }
 }
