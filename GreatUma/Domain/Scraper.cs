@@ -344,7 +344,6 @@ namespace GreatUma.Domain
                     }
                     var horseName = tdList[2].TextContent.Replace("\r", "").Replace("\n", "");
                     var jockyName = tdList[3].TextContent.Replace("\r", "").Replace("\n", "");
-                    //ここでは馬番号だけが欲しいので、確率は無視。
                     result.Add(new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, horseName, jockyName) }, lowOdds, highOdds));
                 }
             }
@@ -402,8 +401,7 @@ namespace GreatUma.Domain
                             continue;
                         }
 
-                        //ここでは馬番号だけが欲しいので、確率その他の情報は無視。
-                        //そもそもこのテーブルから馬名や騎手名は分からない。
+                        //このテーブルから馬名や騎手名は分からないので入っていない。
                         result.Add(new OddsDatum(horseList, lowOdds, highOdds));
                     }
                 }
@@ -537,34 +535,48 @@ namespace GreatUma.Domain
                     {
                         var textForTitle = item.GetElementsByClassName("ItemTitle").FirstOrDefault().TextContent.Replace("\r", "").Replace("\n", "");
                         var textForData = item.GetElementsByClassName("RaceData").FirstOrDefault().TextContent.Replace("\r", "").Replace("\n", "");
-                        var regexForData = new Regex(@".*?(\d\d):(\d\d).*?(芝|ダ)(\d+)m.*?(\d+)頭.*?");
+                        var regexForData = new Regex(@".*?(\d\d):(\d\d).*?(芝|ダ|障)(\d+)m.*?(\d+)頭.*?");
                         var matchForData = regexForData.Match(textForData);
                         if (!matchForData.Success)
                         {
+                            LoggerWrapper.Debug($"{matchForData} is not matched to {regexForData}");
                             continue;
                         }
 
                         if (!int.TryParse(matchForData.Groups[1].Value, out var hours))
                         {
+                            LoggerWrapper.Debug($"Failed to parse horse");
                             continue;
                         }
                         if (!int.TryParse(matchForData.Groups[2].Value, out var minutes))
                         {
+                            LoggerWrapper.Debug($"Failed to parse minutes");
                             continue;
                         }
-                        var courseType = matchForData.Groups[3].Value;
+                        var courseTypeString = matchForData.Groups[3].Value;
                         if (!int.TryParse(matchForData.Groups[4].Value, out var courseLength))
                         {
+                            LoggerWrapper.Debug($"Failed to parse courseLength");
                             continue;
                         }
                         if (!int.TryParse(matchForData.Groups[5].Value, out var horseNumber))
                         {
+                            LoggerWrapper.Debug($"Failed to parse horseNumber");
                             continue;
                         }
                         var baseDate = raceDate.Date;
                         startTimeList.Add(baseDate.AddHours(hours).AddMinutes(minutes));
                         horseCountList.Add(horseNumber);
-                        courseTypeList.Add(courseType == "ダ" ? CourseType.Dirt : CourseType.Grass);
+                        var courseType = CourseType.Grass;
+                        if (courseTypeString == "ダ")
+                        {
+                            courseType = CourseType.Dirt;
+                        }
+                        else if (courseTypeString == "障")
+                        {
+                            courseType = CourseType.Hurdle;
+                        }
+                        courseTypeList.Add(courseType);
                         courseLengthList.Add(courseLength);
                         titleList.Add(textForTitle);
                     }
