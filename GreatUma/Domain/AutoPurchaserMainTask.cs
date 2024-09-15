@@ -6,6 +6,8 @@ using System.Threading.Tasks;
 using GreatUma.Utils;
 using GreatUma.Infrastructures;
 using GreatUma.Models;
+using GreatUma.Infrastructure;
+using GreatUma.Model;
 
 namespace GreatUma.Domain
 {
@@ -14,73 +16,69 @@ namespace GreatUma.Domain
         public bool Running => CancellationTokenSource != null;
 
         private CancellationTokenSource CancellationTokenSource { get; set; }
-        //        private CancellationToken CancelToken { get; set; }
-        //        private BetConfig BetConfig { get; set; }
-        //        private LoginConfig LoginConfig { get; set; }
-        //        private BetResultStatusRepository BetResultStatusRepository { get; set; }
-        //        private List<ActualRaceAndOddsData> NotSavedBetRaceList { get; set; }
+        private CancellationToken CancelToken { get; set; }
+        private BetConfig BetConfig { get; set; }
+        private LoginConfig LoginConfig { get; set; }
+        private TargetStatusRepository TargetStatusRepository { get; set; }
+        private HashSet<RaceData> AlreadyPurchasedRaceHashSet { get; set; }
 
         public void Run()
         {
-            //            if (Running)
-            //            {
-            //                return;
-            //            }
-            //            LoggerWrapper.Info("Start AutoPurcaserMainTask");
-            //            CancellationTokenSource = new CancellationTokenSource();
-            //            CancelToken = CancellationTokenSource.Token;
-            //            BetConfig = new BetConfigRepository().ReadAll();
-            //            LoginConfig = new LoginConfigRepository().ReadAll();
-            //            BetResultStatusRepository = new BetResultStatusRepository();
-            //            //Store時にエラーが起きたなどの場合に重複ベットしないためのメモ
-            //            NotSavedBetRaceList = new List<ActualRaceAndOddsData>();
+            if (Running)
+            {
+                return;
+            }
+            LoggerWrapper.Info("Start AutoPurcaserMainTask");
+            CancellationTokenSource = new CancellationTokenSource();
+            CancelToken = CancellationTokenSource.Token;
+            BetConfig = new BetConfigRepository().ReadAll();
+            LoginConfig = new LoginConfigRepository().ReadAll();
+            Task.Run(() =>
+            {
+                try
+                {
+                    if (CancelToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
+                    using (var scraper = new Scraper())
+                    using (var autoPurchaser = new AutoPurchaser(LoginConfig))
+                    {
+                        while (true)
+                        {
+                            try
+                            {
+                                PurchaseIfNeed(scraper, autoPurchaser);
+                                UpdateResult(scraper);
+                            }
+                            catch (Exception ex)
+                            {
+                                LoggerWrapper.Warn(ex);
+                            }
 
-            //            Task.Run(() =>
-            //            {
-            //                try
-            //                {
-            //                    if (CancelToken.IsCancellationRequested)
-            //                    {
-            //                        return;
-            //                    }
-            //                    using (var scraper = new Scraper())
-            //                    using (var autoPurchaser = new AutoPurchaser(LoginConfig))
-            //                    {
-            //                        while (true)
-            //                        {
-            //                            try
-            //                            {
-            //                                PurchaseIfNeed(scraper, autoPurchaser);
-            //                                UpdateResult(scraper);
-            //                            }
-            //                            catch (Exception ex)
-            //                            {
-            //                                LoggerWrapper.Warn(ex);
-            //                            }
-
-            //                            for (var i = 0; i < 30; i++)
-            //                            {
-            //                                Thread.Sleep(1 * 1000);
-            //                                if (CancelToken.IsCancellationRequested)
-            //                                {
-            //                                    return;
-            //                                }
-            //                            }
-            //                        }
-            //                    }
-            //                }
-            //                catch (Exception ex)
-            //                {
-            //                    LoggerWrapper.Error(ex);
-            //                    throw;
-            //                }
-            //                finally
-            //                {
-            //                    LoggerWrapper.Info("End AutoPurcaserMainTask");
-            //                    CancellationTokenSource.Dispose();
-            //                    CancellationTokenSource = null;
-            //                }
-            //            }, CancelToken);
+                            for (var i = 0; i < 30; i++)
+                            {
+                                Thread.Sleep(1 * 1000);
+                                if (CancelToken.IsCancellationRequested)
+                                {
+                                    return;
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LoggerWrapper.Error(ex);
+                    throw;
+                }
+                finally
+                {
+                    LoggerWrapper.Info("End AutoPurcaserMainTask");
+                    CancellationTokenSource.Dispose();
+                    CancellationTokenSource = null;
+                }
+            }, CancelToken);
         }
 
         public void Stop()
@@ -180,88 +178,63 @@ namespace GreatUma.Domain
         //        }
 
 
-        //        private void PurchaseIfNeed(Scraper scraper, AutoPurchaser autoPurchaser)
-        //        {
-        //            try
-        //            {
-        //                var targetRaces = GetTargetRaceList();
-        //                foreach (var targetRace in targetRaces)
-        //                {
-        //                    PurchaseSingleRaceIfNeed(targetRace);
-        //                }
-        //            }
-        //            catch (Exception ex)
-        //            {
-        //                LoggerWrapper.Warn(ex);
-        //            }
+        private void PurchaseIfNeed(Scraper scraper, AutoPurchaser autoPurchaser)
+        {
+            try
+            {
+                var currentStatus = TargetStatusRepository.ReadAll();
+                foreach (var condition in currentStatus.HorseAndOddsConditionList)
+                {
+                    PurchaseSingleRaceIfNeed(condition);
+                }
+            }
+            catch (Exception ex)
+            {
+                LoggerWrapper.Warn(ex);
+            }
 
-        //            IEnumerable<RaceData> GetTargetRaceList()
-        //            {
-        //                var today = DateTime.Today;
-        //                var raceData = RaceDataManager.GetAndStoreRaceDataOfDay(today, scraper).ToList();
-        //                foreach (var data in raceData
-        //                    .Where(_ => _.HoldingDatum.Region.RagionType == RegionType.Central)
-        //                    .Where(_ => _.StartTime >= DateTime.Now && _.StartTime <= DateTime.Now.AddMinutes(5)))
-        //                {
-        //                    yield return data;
-        //                }
-        //            }
-
-        //            void PurchaseSingleRaceIfNeed(RaceData targetRace)
-        //            {
-        //                try
-        //                {
-        //                    foreach (var notSavedBetRace in NotSavedBetRaceList)
-        //                    {
-        //                        var repository = notSavedBetRace.GetRepository();
-        //                        repository.Store(notSavedBetRace);
-        //                    }
-        //                    NotSavedBetRaceList.Clear();
-
-        //                    var actualRaceAndOddsData = new ActualRaceAndOddsData(targetRace);
-        //                    var actualRaceAndOddsDataRepository = actualRaceAndOddsData.GetRepository();
-        //                    var savedData = actualRaceAndOddsDataRepository.ReadAll();
-        //                    if (savedData == null)
-        //                    {
-        //                        actualRaceAndOddsData.SetRealTimeData(scraper);
-        //                    }
-        //                    else
-        //                    {
-        //                        //保存されているということは購入済みなのでスキップする
-        //                        return;
-        //                    }
-
-        //                    var notSavedBets = NotSavedBetRaceList.Where(_ => _.BaseRaceData.Equals(actualRaceAndOddsData.BaseRaceData));
-        //                    foreach (var notSavedBet in notSavedBets)
-        //                    {
-        //                        actualRaceAndOddsDataRepository.Store(notSavedBet);
-        //                        NotSavedBetRaceList.Remove(notSavedBet);
-        //                        return;
-        //                    }
-
-        //                    var betResultStatus = BetResultStatusRepository.ReadAll(true);
-        //                    var betData = TicketSelector.SelectToBet(actualRaceAndOddsData, BetConfig, betResultStatus).ToList();
-
-        //                    if (betData != null && betData.Any())
-        //                    {
-        //                        LoggerWrapper.Info($"Bet target(s) exist");
-        //                        if (autoPurchaser.Purchase(betData))
-        //                        {
-        //                            var betInformation = new BetInformation(targetRace, betData);
-        //                            var betInfoRepo = betInformation.GetRepository();
-        //                            betInfoRepo.Store(betInformation);
-        //                        }
-        //                    }
-        //                    NotSavedBetRaceList.Add(actualRaceAndOddsData);
-        //                    actualRaceAndOddsDataRepository.Store(actualRaceAndOddsData);
-        //                    NotSavedBetRaceList.Remove(actualRaceAndOddsData);
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    LoggerWrapper.Warn(ex);
-        //                    return;
-        //                }
-        //            }
-        //}
+            void PurchaseSingleRaceIfNeed(HorseAndOddsCondition targetRace)
+            {
+                try
+                {
+                    if (AlreadyPurchasedRaceHashSet.Contains(targetRace.RaceData))
+                    {
+                        return;
+                    }
+                    TargetManager.UpdateRealtimeOdds(scraper, targetRace);
+                    if (targetRace.CurrentWinOdds.LowOdds < 10)
+                    {
+                        return;
+                    }
+                    var betDatum = new BetDatum(
+                        targetRace.RaceData, 
+                        targetRace.MidnightWinOdds.HorseData.Select(_ => _.Number).ToList(), 
+                        100, 
+                        targetRace.CurrentWinOdds.LowOdds, 
+                        targetRace.CurrentWinOdds.LowOdds, 
+                        TicketType.Win);
+                    var betData = new List<BetDatum>
+                    {
+                        betDatum
+                    };
+                    if (betData != null && betData.Any())
+                    {
+                        LoggerWrapper.Info($"Bet target(s) exist");
+                        if (autoPurchaser.Purchase(betData))
+                        {
+                            //var betInformation = new BetInformation(, betData);
+                            //var betInfoRepo = betInformation.GetRepository();
+                            //betInfoRepo.Store(betInformation);
+                            AlreadyPurchasedRaceHashSet.Add(targetRace.RaceData);
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    LoggerWrapper.Warn(ex);
+                    return;
+                }
+            }
+        }
     }
 }
