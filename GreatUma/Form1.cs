@@ -38,19 +38,6 @@ namespace GreatUma
                 }
                 column.ReadOnly = true;
             }
-
-            BindingList.Add(new HorseAndOddsCondition()
-            {
-                StartTime = DateTime.Now,
-                Region = "福島",
-                Title = "未勝利",
-                Course = "芝 1500",
-                Jocky = "武豊",
-                HorseNum = "3",
-                MidnightOdds = "1.4 1.1-1.2",
-                CurrentOdds = "1.3 1.1-1.1",
-                PurchaseCondition = 100
-            });
         }
 
         private void UpdateButton_Click(object sender, EventArgs e)
@@ -81,18 +68,13 @@ namespace GreatUma
                 if (!TargetManagementTask.Running)
                 {
                     IsAutoUpdating = false;
+                    BindingList.Clear();
+                    var currentConditionList = TargetManagementTask.GetHorseAndOddsCondition();
+                    foreach (var currentCondition in currentConditionList)
+                    {
+                        BindingList.Add(currentCondition);
+                    }
                 }
-                //if (!TargetManagementTask.Running &&
-                //    DateTime.Now - LastCheckTime > CurrentOddsCheckSpan)
-                //{
-                //    var currentConditionList = TargetManagementTask.GetHorseAndOddsCondition();
-                //    BindingList.Clear();
-                //    foreach (var currentCondition in currentConditionList)
-                //    {
-                //        BindingList.Add(currentCondition);
-                //    }
-                //    TargetManagementTask.Run();
-                //}
             }
             if (!IsAutoUpdating)
             {
@@ -151,7 +133,7 @@ namespace GreatUma
             var targetCondition = BindingList.LastOrDefault();
             if (targetCondition == null)
             {
-                MessageBox.Show("対象のレースがないため残高を取得をスキップします。");
+                MessageBox.Show("対象のレースがないため残高の取得をスキップします。");
                 return;
             }
             var loginRepo = new LoginConfigRepository();

@@ -194,7 +194,7 @@
             // timer1
             // 
             timer1.Enabled = true;
-            timer1.Interval = 60000;
+            timer1.Interval = 10000;
             timer1.Tick += Timer1_Tick;
             // 
             // buttonStopAutoupdate
