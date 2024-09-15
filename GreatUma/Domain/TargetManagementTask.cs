@@ -7,6 +7,7 @@ using GreatUma.Utils;
 using GreatUma.Infrastructures;
 using GreatUma.Models;
 using GreatUma.Model;
+using GreatUma.Infrastructure;
 
 namespace GreatUma.Domain
 {
@@ -18,6 +19,15 @@ namespace GreatUma.Domain
         private Scraper Scraper { get; set; }
         private TargetManager TargetManager { get; set; }
         private object LockObject { get; } = new object();
+        private TargetStatusRepository TargetStatusRepository { get; set; }
+
+        ~TargetManagementTask()
+        {
+            if (Scraper != null)
+            {
+                Scraper.Dispose();
+            }
+        }
 
         public void Run()
         {
@@ -36,11 +46,11 @@ namespace GreatUma.Domain
             {
                 if (TargetManager == null)
                 {
-                    TargetManager = new TargetManager(Scraper, DateTime.Today);
+                    TargetManager = new TargetManager(DateTime.Today);
                 }
                 if (TargetManager.TargetDate != DateTime.Today)
                 {
-                    TargetManager = new TargetManager(Scraper, DateTime.Today);
+                    TargetManager = new TargetManager(DateTime.Today);
                 }
             }
             //Store時にエラーが起きたなどの場合に重複ベットしないためのメモ
@@ -59,6 +69,9 @@ namespace GreatUma.Domain
                             TargetManager.Initialize();
                         }
                         TargetManager.Update(DateTime.Now);
+                        var currentStatus = TargetStatusRepository.ReadAll();
+                        currentStatus.HorseAndOddsConditionList = TargetManager.TargetList;
+                        TargetStatusRepository.Store(currentStatus);
                     }
                 }
                 catch (Exception ex)

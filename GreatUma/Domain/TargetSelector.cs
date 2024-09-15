@@ -4,20 +4,21 @@ using System.Linq;
 using GreatUma.Models;
 using GreatUma.Model;
 using System.Security.Policy;
+using NLog.Common;
 
 namespace GreatUma.Domain
 {
     public class TargetSelector
     {
-        private static double TargetPlaceOdds = 1.1;
-
+        private double TargetPlaceOdds { get; set; } = 1.1;
         private Scraper Scraper { get; set; }
         private DateTime TargetDate { get; set; }
-
-        public TargetSelector(Scraper scraper, DateTime targetDate)
+        
+        public TargetSelector(Scraper scraper, DateTime targetDate, double targetPlaceOdds = 1.1)
         {
             this.Scraper = scraper;
             this.TargetDate = targetDate;
+            this.TargetPlaceOdds = targetPlaceOdds; 
         }
 
         public IEnumerable<HorseAndOddsCondition> GetTargets(DateTime currentTime)
@@ -51,46 +52,48 @@ namespace GreatUma.Domain
 
         public HorseAndOddsCondition GetTarget(RaceData raceData)
         {
-            var scraper = this.Scraper;
-            var placeOddsList = scraper.GetOdds(raceData, Utils.TicketType.Place);
-            var winOddsList = scraper.GetOdds(raceData, Utils.TicketType.Win);
-            var horseData = scraper.GetHorseInfo(raceData);
-            var mostPopularWin = winOddsList.OrderBy(_ => _.LowOdds).FirstOrDefault();
-            if (mostPopularWin == null)
+            try
             {
+                var scraper = this.Scraper;
+                var placeOddsList = scraper.GetOdds(raceData, Utils.TicketType.Place);
+                var winOddsList = scraper.GetOdds(raceData, Utils.TicketType.Win);
+                var horseData = scraper.GetHorseInfo(raceData);
+                var mostPopularWin = winOddsList.OrderBy(_ => _.LowOdds).FirstOrDefault();
+                if (mostPopularWin == null)
+                {
+                    return null;
+                }
+                if (mostPopularWin.HorseData.Count != 1)
+                {
+                    // 複勝のオッズなので、馬は一頭。（馬連なら二頭、三連複なら三頭になる。）
+                    return null;
+                }
+                var mostPopularPlace = placeOddsList
+                        .Where(_ => _.HorseData.Count == 1)?
+                        .FirstOrDefault(_ => _.HorseData[0].Number == mostPopularWin.HorseData[0].Number);
+                if (mostPopularPlace == null)
+                {
+                    return null;
+                }
+                if (mostPopularPlace.HighOdds > TargetPlaceOdds)
+                {
+                    return null;
+                }
+                return new HorseAndOddsCondition()
+                {
+                    PurchaseCondition = -1,
+                    RaceData = raceData,
+                    MidnightWinOdds = mostPopularWin,
+                    MidnightPlaceOdds = mostPopularPlace,
+                    CurrentWinOdds = mostPopularWin,
+                    CurrentPlaceOdds = mostPopularPlace,
+                };
+            }
+            catch(Exception ex)
+            {
+                LoggerWrapper.Error(ex);
                 return null;
             }
-            if (mostPopularWin.HorseData.Count != 1)
-            {
-                // 複勝のオッズなので、馬は一頭。（馬連なら二頭、三連複なら三頭になる。）
-                return null;
-            }
-            var mostPopularPlace = placeOddsList
-                    .Where(_ => _.HorseData.Count == 1)?
-                    .FirstOrDefault(_ => _.HorseData[0].Number == mostPopularWin.HorseData[0].Number);
-            if (mostPopularPlace == null)
-            {
-                return null;
-            }
-            var horseNumberForOdds = mostPopularWin.HorseData[0].Number;
-            var horseDatum = horseData.FirstOrDefault(_ => _.Number == horseNumberForOdds);
-            if (horseDatum == null)
-            {
-                return null;
-            }
-            return new HorseAndOddsCondition()
-            {
-                StartTime = raceData.StartTime,
-                Region = raceData.HoldingDatum.Region.RegionName,
-                Title = raceData.Title,
-                Course = raceData.CourseType.ToString(),
-                HorseNum = horseNumberForOdds.ToString(),
-                Jocky = horseDatum.Jockey,
-                MidnightOdds = $"単勝:{mostPopularWin.LowOdds} 複勝:{mostPopularPlace.LowOdds}-{mostPopularPlace.HighOdds}",
-                CurrentOdds = $"単勝:{mostPopularWin.LowOdds} 複勝:{mostPopularPlace.LowOdds}-{mostPopularPlace.HighOdds}",
-                PurchaseCondition = -1,
-                RaceData = raceData,
-            };
         }
     }
 }
