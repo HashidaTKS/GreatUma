@@ -19,7 +19,7 @@ namespace GreatUma.Domain
         private Scraper Scraper { get; set; }
         private TargetManager TargetManager { get; set; }
         private object LockObject { get; } = new object();
-        private TargetStatusRepository TargetStatusRepository { get; set; }
+        public TargetStatusRepository TargetStatusRepository { get; set; }
 
         ~TargetManagementTask()
         {
@@ -69,7 +69,7 @@ namespace GreatUma.Domain
                             TargetManager.Initialize();
                         }
                         TargetManager.Update(DateTime.Now);
-                        var currentStatus = TargetStatusRepository.ReadAll();
+                        var currentStatus = TargetStatusRepository.ReadAll(true);
                         currentStatus.HorseAndOddsConditionList = TargetManager.TargetList;
                         TargetStatusRepository.Store(currentStatus);
                     }

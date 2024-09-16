@@ -10,7 +10,7 @@ namespace GreatUma.Domain
 {
     public class TargetSelector
     {
-        private double TargetPlaceOdds { get; set; } = 1.1;
+        private double TargetPlaceOdds { get; set; } = 1.8;
         private Scraper Scraper { get; set; }
         private DateTime TargetDate { get; set; }
         

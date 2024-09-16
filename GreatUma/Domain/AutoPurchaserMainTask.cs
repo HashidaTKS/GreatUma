@@ -17,9 +17,7 @@ namespace GreatUma.Domain
 
         private CancellationTokenSource CancellationTokenSource { get; set; }
         private CancellationToken CancelToken { get; set; }
-        private BetConfig BetConfig { get; set; }
-        private LoginConfig LoginConfig { get; set; }
-        private TargetStatusRepository TargetStatusRepository { get; set; }
+        public TargetStatusRepository TargetStatusRepository { get; set; }
         private HashSet<RaceData> AlreadyPurchasedRaceHashSet { get; set; }
 
         public void Run()
@@ -31,8 +29,7 @@ namespace GreatUma.Domain
             LoggerWrapper.Info("Start AutoPurcaserMainTask");
             CancellationTokenSource = new CancellationTokenSource();
             CancelToken = CancellationTokenSource.Token;
-            BetConfig = new BetConfigRepository().ReadAll();
-            LoginConfig = new LoginConfigRepository().ReadAll();
+            var loginConfig = new LoginConfigRepository().ReadAll();
             Task.Run(() =>
             {
                 try
@@ -42,14 +39,13 @@ namespace GreatUma.Domain
                         return;
                     }
                     using (var scraper = new Scraper())
-                    using (var autoPurchaser = new AutoPurchaser(LoginConfig))
+                    using (var autoPurchaser = new AutoPurchaser(loginConfig))
                     {
                         while (true)
                         {
                             try
                             {
                                 PurchaseIfNeed(scraper, autoPurchaser);
-                                UpdateResult(scraper);
                             }
                             catch (Exception ex)
                             {
@@ -90,94 +86,6 @@ namespace GreatUma.Domain
             CancellationTokenSource.Cancel();
         }
 
-        //        /// <summary>
-        //        ///必要に応じて結果データを更新しながら、過去のベットの結果を確認する。
-        //        ///ただし最大でも一カ月前までしか遡らない。
-        //        ///また、レースデータが存在している部分のみを対象とする。
-        //        /// </summary>
-        //        /// <param name="scraper"></param>
-        //        private void UpdateResult(Scraper scraper)
-        //        {
-        //            var betResultStatus = BetResultStatusRepository.ReadAll(true);
-        //            var monthBefore = DateTime.Now.AddMonths(-1);
-        //            var statusCheckTargetTime = DateTime.Now.AddHours(-1);
-        //            var statusCheckStart = betResultStatus.CheckedTime > monthBefore ? betResultStatus.CheckedTime : monthBefore;
-
-
-        //            for (var date = statusCheckStart; date < statusCheckTargetTime; date = date.AddDays(1))
-        //            {
-        //                try
-        //                {
-        //                    if (CancelToken.IsCancellationRequested)
-        //                    {
-        //                        return;
-        //                    }
-        //                    foreach (var targetRace in RaceDataManager.GetRaceDataOfDay(date.Date))
-        //                    {
-        //                        if (targetRace == null)
-        //                        {
-        //                            LoggerWrapper.Debug("Target race does not exist");
-        //                            continue;
-        //                        }
-        //                        if (targetRace.StartTime > statusCheckTargetTime)
-        //                        {
-        //                            //本日のまだ確定していないデータの可能性があるので、スキップ
-        //                            LoggerWrapper.Debug("Do not elapse enough time");
-        //                            continue;
-        //                        }
-        //                        if (targetRace.StartTime < statusCheckStart)
-        //                        {
-        //                            //確認済みなのでスキップ
-        //                            LoggerWrapper.Debug("Already checked");
-        //                            continue;
-        //                        }
-
-
-        //                        try
-        //                        {
-        //                            RaceResultManager.UpdateResultDataIfNeed(scraper, targetRace);
-        //                        }
-        //                        catch (Exception ex)
-        //                        {
-        //                            LoggerWrapper.Warn(ex);
-        //                            continue;
-        //                        }
-
-        //                        var betInformation = BetInformation.GetRepository(targetRace).ReadAll();
-        //                        if (betInformation == null)
-        //                        {
-        //                            continue;
-        //                        }
-
-        //                        var raceResult = RaceResult.GetRepository(targetRace).ReadAll();
-        //                        foreach (var betDatum in betInformation.BetData)
-        //                        {
-        //                            var resultOfBet = new ResultOfBet(betDatum, raceResult);
-        //                            var targetStatus = betResultStatus.GetTicketTypeStatus(betDatum.TicketType);
-        //                            if (resultOfBet.IsHit)
-        //                            {
-        //                                targetStatus.CountOfContinuationLose = 0;
-        //                            }
-        //                            else
-        //                            {
-        //                                targetStatus.CountOfContinuationLose += 1;
-        //                            }
-
-        //                        }
-        //                    }
-        //                }
-        //                catch (Exception ex)
-        //                {
-        //                    LoggerWrapper.Warn(ex);
-        //                    continue;
-        //                }
-        //            }
-
-        //            betResultStatus.CheckedTime = statusCheckTargetTime;
-        //            BetResultStatusRepository.Store(betResultStatus);
-        //        }
-
-
         private void PurchaseIfNeed(Scraper scraper, AutoPurchaser autoPurchaser)
         {
             try
@@ -193,25 +101,27 @@ namespace GreatUma.Domain
                 LoggerWrapper.Warn(ex);
             }
 
-            void PurchaseSingleRaceIfNeed(HorseAndOddsCondition targetRace)
+            void PurchaseSingleRaceIfNeed(HorseAndOddsCondition condition)
             {
                 try
                 {
-                    if (AlreadyPurchasedRaceHashSet.Contains(targetRace.RaceData))
+                    if (AlreadyPurchasedRaceHashSet.Contains(condition.RaceData))
                     {
                         return;
                     }
-                    TargetManager.UpdateRealtimeOdds(scraper, targetRace);
-                    if (targetRace.CurrentWinOdds.LowOdds < 10)
+                    TargetManager.UpdateRealtimeOdds(scraper, condition);
+                    
+                    if (condition.PurchaseCondition < 1 || 
+                        condition.CurrentWinOdds.LowOdds < condition.PurchaseCondition)
                     {
                         return;
                     }
                     var betDatum = new BetDatum(
-                        targetRace.RaceData, 
-                        targetRace.MidnightWinOdds.HorseData.Select(_ => _.Number).ToList(), 
+                        condition.RaceData, 
+                        condition.MidnightWinOdds.HorseData.Select(_ => _.Number).ToList(), 
                         100, 
-                        targetRace.CurrentWinOdds.LowOdds, 
-                        targetRace.CurrentWinOdds.LowOdds, 
+                        condition.CurrentWinOdds.LowOdds, 
+                        condition.CurrentWinOdds.LowOdds, 
                         TicketType.Win);
                     var betData = new List<BetDatum>
                     {
@@ -222,10 +132,7 @@ namespace GreatUma.Domain
                         LoggerWrapper.Info($"Bet target(s) exist");
                         if (autoPurchaser.Purchase(betData))
                         {
-                            //var betInformation = new BetInformation(, betData);
-                            //var betInfoRepo = betInformation.GetRepository();
-                            //betInfoRepo.Store(betInformation);
-                            AlreadyPurchasedRaceHashSet.Add(targetRace.RaceData);
+                            AlreadyPurchasedRaceHashSet.Add(condition.RaceData);
                         }
                     }
                 }

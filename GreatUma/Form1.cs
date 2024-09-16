@@ -1,4 +1,5 @@
 using GreatUma.Domain;
+using GreatUma.Infrastructure;
 using GreatUma.Infrastructures;
 using GreatUma.Model;
 using GreatUma.Models;
@@ -14,6 +15,7 @@ namespace GreatUma
         private List<HorseAndOddsCondition> HorseAndOddsConditionList { get; } = new List<HorseAndOddsCondition>();
         private AutoPurchaserMainTask AutoPurchaserMainTask { get; } = new AutoPurchaserMainTask();
         private TargetManagementTask TargetManagementTask { get; } = new TargetManagementTask();
+        private TargetStatusRepository TargetStatusRepository { get; } = new TargetStatusRepository();
         private TimeSpan CurrentOddsCheckSpan { get; } = new TimeSpan(0, 10, 0);
         private DateTime LastCheckTime { get; set; } = DateTime.MinValue;
 
@@ -29,6 +31,8 @@ namespace GreatUma
         {
             BindingSource.DataSource = BindingList;
             dataGridView1.DataSource = BindingSource;
+            TargetManagementTask.TargetStatusRepository = TargetStatusRepository;
+            AutoPurchaserMainTask.TargetStatusRepository = TargetStatusRepository;
 
             foreach (DataGridViewColumn column in dataGridView1.Columns)
             {
