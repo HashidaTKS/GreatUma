@@ -179,8 +179,9 @@
             buttonSaveConfition.Name = "buttonSaveConfition";
             buttonSaveConfition.Size = new Size(75, 23);
             buttonSaveConfition.TabIndex = 14;
-            buttonSaveConfition.Text = "設定保存";
+            buttonSaveConfition.Text = "状態保存";
             buttonSaveConfition.UseVisualStyleBackColor = true;
+            buttonSaveConfition.Click += buttonSaveConfition_Click;
             // 
             // textBoxCurrentPrice
             // 

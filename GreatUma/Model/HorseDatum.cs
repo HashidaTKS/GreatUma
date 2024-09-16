@@ -11,9 +11,9 @@ namespace GreatUma.Models
     {
         [DataMember]
         public int Number { get; set; }
-
+        [DataMember]
         public string Name { get; set; }
-
+        [DataMember]
         public string Jockey { get; set; }
 
         public HorseDatum()

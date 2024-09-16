@@ -43,7 +43,6 @@ namespace GreatUma.Models
     }
 
     [DataContract]
-
     public class BetResultStatusOfTicketType
     {
         [DataMember]

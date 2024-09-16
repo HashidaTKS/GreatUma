@@ -303,7 +303,6 @@ namespace GreatUma.Domain
                     }
                     var horseName = tdList[2].TextContent.Replace("\r", "").Replace("\n", "");
                     var jockyName = tdList[3].TextContent.Replace("\r", "").Replace("\n", "");
-                    //ここでは馬番号だけが欲しいので、確率は無視
                     result.Add(new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, horseName, jockyName) }, odds, odds));
                 }
             }

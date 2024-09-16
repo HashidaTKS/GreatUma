@@ -20,17 +20,17 @@ namespace GreatUma.Model
         [DisplayName("コース")]
         public string Course => RaceData?.CourseType.ToString() ?? "";
         [DisplayName("馬番")]
-        public string HorseNum => MidnightWinOdds?.HorseData[0].Number.ToString() ?? "";
+        public string HorseNum => CurrentWinOdds?.HorseData[0].Number.ToString() ?? "";
         [DisplayName("騎手")]
-        public string Jockey => MidnightWinOdds?.HorseData[0].Jockey.ToString() ?? "";
+        public string Jockey => CurrentWinOdds?.HorseData[0].Jockey?.ToString() ?? "";
         [DisplayName("0時オッズ")]
-        public string MidnightOdds => MidnightWinOdds == null || MidnightPlaceOdds == null ?
+        public string MidnightOdds => CurrentWinOdds == null || MidnightPlaceOdds == null ?
             "" :
             $"単勝:{MidnightWinOdds.LowOdds} 複勝:{MidnightPlaceOdds.LowOdds} - {MidnightPlaceOdds.HighOdds}";
         [DisplayName("現在オッズ")]
         public string CurrentOdds => CurrentWinOdds == null || CurrentPlaceOdds == null ?
             "" :
-            $"単勝:{CurrentWinOdds.LowOdds} 複勝:{CurrentPlaceOdds.LowOdds} - {CurrentPlaceOdds.LowOdds}";
+            $"単勝:{CurrentWinOdds.LowOdds} 複勝:{CurrentPlaceOdds.LowOdds} - {CurrentPlaceOdds.HighOdds}";
         [DisplayName("3分前購入条件")]
         [DataMember]
         public double PurchaseCondition { get; set; }

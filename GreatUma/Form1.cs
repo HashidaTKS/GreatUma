@@ -42,6 +42,18 @@ namespace GreatUma
                 }
                 column.ReadOnly = true;
             }
+            var targetStatus = TargetStatusRepository.ReadAll();
+            if (targetStatus != null)
+            {
+                if (targetStatus.HorseAndOddsConditionList != null)
+                {
+                    foreach (var condition in targetStatus.HorseAndOddsConditionList)
+                    {
+                        BindingList.Add(condition);
+                    }
+                }
+                numericUpDownPurchasePrice.Value = targetStatus.PurchasePrice;
+            }
         }
 
         private void UpdateButton_Click(object sender, EventArgs e)
@@ -178,7 +190,7 @@ namespace GreatUma
         {
             SetPriceRatio();
         }
-        
+
         private void SetPriceRatio()
         {
             if (double.TryParse(textBoxCurrentPrice.Text, out double price))
@@ -187,6 +199,14 @@ namespace GreatUma
                 var value = price * ratio / 100.0;
                 textBoxPriceAppliedRatio.Text = ((int)Math.Ceiling(value)).ToString();
             }
+        }
+
+        private void buttonSaveConfition_Click(object sender, EventArgs e)
+        {
+            var targetStatus = TargetStatusRepository.ReadAll(true);
+            targetStatus.PurchasePrice = (int)this.numericUpDownPurchasePrice.Value;
+            targetStatus.HorseAndOddsConditionList = BindingList?.Select(_ => _)?.ToList() ?? new List<HorseAndOddsCondition>();
+            TargetStatusRepository.Store(targetStatus);
         }
     }
 }

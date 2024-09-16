@@ -18,7 +18,7 @@ namespace GreatUma.Domain
         private CancellationTokenSource CancellationTokenSource { get; set; }
         private CancellationToken CancelToken { get; set; }
         public TargetStatusRepository TargetStatusRepository { get; set; }
-        private HashSet<RaceData> AlreadyPurchasedRaceHashSet { get; set; }
+        private HashSet<RaceData> AlreadyPurchasedRaceHashSet { get; set; } = new HashSet<RaceData>();
 
         public void Run()
         {
@@ -91,9 +91,13 @@ namespace GreatUma.Domain
             try
             {
                 var currentStatus = TargetStatusRepository.ReadAll();
+                if (currentStatus == null)
+                {
+                    return;
+                }
                 foreach (var condition in currentStatus.HorseAndOddsConditionList)
                 {
-                    PurchaseSingleRaceIfNeed(condition);
+                    PurchaseSingleRaceIfNeed(condition, currentStatus.PurchasePrice);
                 }
             }
             catch (Exception ex)
@@ -101,7 +105,7 @@ namespace GreatUma.Domain
                 LoggerWrapper.Warn(ex);
             }
 
-            void PurchaseSingleRaceIfNeed(HorseAndOddsCondition condition)
+            void PurchaseSingleRaceIfNeed(HorseAndOddsCondition condition, int price)
             {
                 try
                 {
@@ -110,7 +114,17 @@ namespace GreatUma.Domain
                         return;
                     }
                     TargetManager.UpdateRealtimeOdds(scraper, condition);
-                    
+                    if(condition.StartTime > DateTime.Now.AddMinutes(3))
+                    {
+                        //3分前より近くなったら購入する
+                        return;
+                    }
+#if !DEBUG
+                    if (condition.StartTime < DateTime.Now)
+                    {
+                        return;
+                    }
+#endif
                     if (condition.PurchaseCondition < 1 || 
                         condition.CurrentWinOdds.LowOdds < condition.PurchaseCondition)
                     {
@@ -119,7 +133,7 @@ namespace GreatUma.Domain
                     var betDatum = new BetDatum(
                         condition.RaceData, 
                         condition.MidnightWinOdds.HorseData.Select(_ => _.Number).ToList(), 
-                        100, 
+                        price, 
                         condition.CurrentWinOdds.LowOdds, 
                         condition.CurrentWinOdds.LowOdds, 
                         TicketType.Win);

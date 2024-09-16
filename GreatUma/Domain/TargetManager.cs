@@ -9,7 +9,7 @@ namespace GreatUma.Domain
 {
     public class TargetManager
     {
-        private double TargetPlaceOdds { get; set; } = 1.1;
+        private double TargetPlaceOdds { get; set; }
         internal DateTime TargetDate { get; set; }
         internal List<HorseAndOddsCondition> TargetList { get; private set; } = new List<HorseAndOddsCondition>();
 
