@@ -4,6 +4,7 @@ using System.Linq;
 using GreatUma.Models;
 using GreatUma.Model;
 using System.Security.Policy;
+using GreatUma.Infrastructure;
 
 namespace GreatUma.Domain
 {
@@ -11,14 +12,14 @@ namespace GreatUma.Domain
     {
         private double TargetPlaceOdds { get; set; }
         internal DateTime TargetDate { get; set; }
-        internal List<HorseAndOddsCondition> TargetList { get; private set; } = new List<HorseAndOddsCondition>();
-
         public bool IsInitialized { get; set; }
+        private TargetStatusRepository TargetStatusRepository { get; set; }
 
-        public TargetManager(DateTime targetDate, double targetPlaceOdds = 1.1)
+        public TargetManager(DateTime targetDate, TargetStatusRepository targetStatusRepository, double targetPlaceOdds = 1.1)
         {
             this.TargetDate = targetDate;
             this.TargetPlaceOdds = targetPlaceOdds;
+            this.TargetStatusRepository = targetStatusRepository;
         }
 
         public void Initialize()
@@ -35,12 +36,26 @@ namespace GreatUma.Domain
         {
             using var scraper = new Scraper();
             var selector = new TargetSelector(scraper, this.TargetDate, this.TargetPlaceOdds);
-            this.TargetList = selector.GetTargets(currentTime)?.OrderBy(_ => _.StartTime).ToList() ?? new List<HorseAndOddsCondition>();
+            var targetList = selector.GetTargets(currentTime)?.OrderBy(_ => _.StartTime).ToList() ?? new List<HorseAndOddsCondition>();
+            var targetStatus = TargetStatusRepository.ReadAll(true);
+            if (targetStatus.HorseAndOddsConditionList != null)
+            {
+                foreach (var target in targetList)
+                {
+                    var currentCondition = targetStatus.HorseAndOddsConditionList.FirstOrDefault(_ => _.RaceData.Equals(target.RaceData));
+                    if (currentCondition == null)
+                    {
+                        continue;
+                    }
+                    target.PurchaseCondition = currentCondition.PurchaseCondition;
+                }
+            }
+            targetStatus.HorseAndOddsConditionList = targetList;
+            TargetStatusRepository.Store(targetStatus);
         }
 
         public void Update(DateTime currentTime)
         {
-            this.TargetList.RemoveAll(_ => _.RaceData.StartTime < currentTime);
             if (currentTime.Date > TargetDate)
             {
                 TargetDate = currentTime.Date;
@@ -52,9 +67,21 @@ namespace GreatUma.Domain
         public void UpdateAllRealtimeOdds()
         {
             using var scraper = new Scraper();
-            foreach (var horseAndOddsCondition in this.TargetList)
+            var targetStatus = TargetStatusRepository.ReadAll(true);
+            try
             {
-                UpdateRealtimeOdds(scraper, horseAndOddsCondition);
+                if (targetStatus.HorseAndOddsConditionList == null)
+                {
+                    return;
+                }
+                foreach (var horseAndOddsCondition in targetStatus.HorseAndOddsConditionList)
+                {
+                    UpdateRealtimeOdds(scraper, horseAndOddsCondition);
+                }
+            }
+            finally
+            {
+                TargetStatusRepository.Store(targetStatus);
             }
         }
 

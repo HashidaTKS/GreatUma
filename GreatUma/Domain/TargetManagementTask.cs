@@ -46,11 +46,11 @@ namespace GreatUma.Domain
             {
                 if (TargetManager == null)
                 {
-                    TargetManager = new TargetManager(DateTime.Today);
+                    TargetManager = new TargetManager(DateTime.Today, TargetStatusRepository);
                 }
                 if (TargetManager.TargetDate != DateTime.Today)
                 {
-                    TargetManager = new TargetManager(DateTime.Today);
+                    TargetManager = new TargetManager(DateTime.Today, TargetStatusRepository);
                 }
             }
             //Store時にエラーが起きたなどの場合に重複ベットしないためのメモ
@@ -69,9 +69,6 @@ namespace GreatUma.Domain
                             TargetManager.Initialize();
                         }
                         TargetManager.Update(DateTime.Now);
-                        var currentStatus = TargetStatusRepository.ReadAll(true);
-                        currentStatus.HorseAndOddsConditionList = TargetManager.TargetList;
-                        TargetStatusRepository.Store(currentStatus);
                     }
                 }
                 catch (Exception ex)
@@ -86,14 +83,6 @@ namespace GreatUma.Domain
                     CancellationTokenSource = null;
                 }
             }, CancelToken);
-        }
-
-        public List<HorseAndOddsCondition> GetHorseAndOddsCondition()
-        {
-            lock (LockObject)
-            {
-                return TargetManager.TargetList;
-            }
         }
 
         public void Stop()

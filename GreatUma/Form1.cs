@@ -85,7 +85,8 @@ namespace GreatUma
                 {
                     IsAutoUpdating = false;
                     BindingList.Clear();
-                    var currentConditionList = TargetManagementTask.GetHorseAndOddsCondition();
+                    var currentStatus = TargetStatusRepository.ReadAll(true);
+                    var currentConditionList = currentStatus.HorseAndOddsConditionList ?? new List<HorseAndOddsCondition>();
                     foreach (var currentCondition in currentConditionList)
                     {
                         BindingList.Add(currentCondition);

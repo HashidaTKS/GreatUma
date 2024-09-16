@@ -34,13 +34,13 @@ namespace GreatUma.Model
         [DisplayName("3分前購入条件")]
         [DataMember]
         public double PurchaseCondition { get; set; }
+        [Browsable(false)]
+        [DataMember]
+        public RaceData RaceData { get; set; }
         /// <summary>
         /// 0時時点の単勝オッズ。馬などの詳細なデータが必要な場合はこちらを使う。
         /// 実際には、0時時点ではなく、最初にこのクラスが作成された際のオッズであることに注意。
         /// </summary>
-        [Browsable(false)]
-        [DataMember]
-        public RaceData RaceData { get; set; }
         [Browsable(false)]
         [DataMember]
         public OddsDatum MidnightWinOdds { get; set; }
