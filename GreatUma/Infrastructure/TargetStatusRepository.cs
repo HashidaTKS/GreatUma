@@ -8,13 +8,13 @@ using GreatUma.Model;
 
 namespace GreatUma.Infrastructure
 {
-    public class TargetStatusRepository : BaseRepository<TargetStatus>
+    public class TargetConfigRepository : BaseRepository<TargetConfig>
     {
-        public TargetStatusRepository() : base("target_status.xml")
+        public TargetConfigRepository() : base("target_config.xml")
         {
         }
 
-        public TargetStatusRepository(string filePath) : base(filePath)
+        public TargetConfigRepository(string filePath) : base(filePath)
         {
 
         }

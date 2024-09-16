@@ -19,7 +19,7 @@ namespace GreatUma.Domain
         private Scraper Scraper { get; set; }
         private TargetManager TargetManager { get; set; }
         private object LockObject { get; } = new object();
-        public TargetStatusRepository TargetStatusRepository { get; set; }
+        public TargetConfigRepository TargetConfigRepository { get; set; }
 
         ~TargetManagementTask()
         {
@@ -46,11 +46,11 @@ namespace GreatUma.Domain
             {
                 if (TargetManager == null)
                 {
-                    TargetManager = new TargetManager(DateTime.Today, TargetStatusRepository);
+                    TargetManager = new TargetManager(DateTime.Today, TargetConfigRepository);
                 }
                 if (TargetManager.TargetDate != DateTime.Today)
                 {
-                    TargetManager = new TargetManager(DateTime.Today, TargetStatusRepository);
+                    TargetManager = new TargetManager(DateTime.Today, TargetConfigRepository);
                 }
             }
             //Store時にエラーが起きたなどの場合に重複ベットしないためのメモ

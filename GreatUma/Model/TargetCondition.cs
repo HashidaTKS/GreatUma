@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace GreatUma.Model
 {
-    public class HorseAndOddsCondition
+    public class TargetCondition
     {
         [DisplayName("発送時刻")]
         public DateTime StartTime => RaceData?.StartTime ?? DateTime.MinValue;
@@ -31,9 +31,9 @@ namespace GreatUma.Model
         public string CurrentOdds => CurrentWinOdds == null || CurrentPlaceOdds == null ?
             "" :
             $"単勝:{CurrentWinOdds.LowOdds} 複勝:{CurrentPlaceOdds.LowOdds} - {CurrentPlaceOdds.HighOdds}";
-        [DisplayName("3分前購入条件")]
+        [DisplayName("購入オッズ条件（3分前にこのオッズ以上なら購入）")]
         [DataMember]
-        public double PurchaseCondition { get; set; }
+        public double PurchaseOdds { get; set; }
         [Browsable(false)]
         [DataMember]
         public RaceData RaceData { get; set; }

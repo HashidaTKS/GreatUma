@@ -17,7 +17,7 @@ namespace GreatUma.Domain
 
         private CancellationTokenSource CancellationTokenSource { get; set; }
         private CancellationToken CancelToken { get; set; }
-        public TargetStatusRepository TargetStatusRepository { get; set; }
+        public TargetConfigRepository TargetConfigRepository { get; set; }
         private HashSet<RaceData> AlreadyPurchasedRaceHashSet { get; set; } = new HashSet<RaceData>();
 
         public void Run()
@@ -90,12 +90,12 @@ namespace GreatUma.Domain
         {
             try
             {
-                var currentStatus = TargetStatusRepository.ReadAll();
+                var currentStatus = TargetConfigRepository.ReadAll();
                 if (currentStatus == null)
                 {
                     return;
                 }
-                foreach (var condition in currentStatus.HorseAndOddsConditionList)
+                foreach (var condition in currentStatus.TargetConditionList)
                 {
                     PurchaseSingleRaceIfNeed(condition, currentStatus.PurchasePrice);
                 }
@@ -105,7 +105,7 @@ namespace GreatUma.Domain
                 LoggerWrapper.Warn(ex);
             }
 
-            void PurchaseSingleRaceIfNeed(HorseAndOddsCondition condition, int price)
+            void PurchaseSingleRaceIfNeed(TargetCondition condition, int price)
             {
                 try
                 {
@@ -125,8 +125,8 @@ namespace GreatUma.Domain
                         return;
                     }
 #endif
-                    if (condition.PurchaseCondition < 1 || 
-                        condition.CurrentWinOdds.LowOdds < condition.PurchaseCondition)
+                    if (condition.PurchaseOdds < 1 || 
+                        condition.CurrentWinOdds.LowOdds < condition.PurchaseOdds)
                     {
                         return;
                     }

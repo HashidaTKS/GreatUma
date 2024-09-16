@@ -10,12 +10,12 @@ namespace GreatUma
 {
     public partial class Form1 : Form
     {
-        private BindingList<HorseAndOddsCondition> BindingList { get; } = new BindingList<HorseAndOddsCondition>();
+        private BindingList<TargetCondition> BindingList { get; } = new BindingList<TargetCondition>();
         private BindingSource BindingSource { get; } = new BindingSource();
-        private List<HorseAndOddsCondition> HorseAndOddsConditionList { get; } = new List<HorseAndOddsCondition>();
+        private List<TargetCondition> TargetConditionList { get; } = new List<TargetCondition>();
         private AutoPurchaserMainTask AutoPurchaserMainTask { get; } = new AutoPurchaserMainTask();
         private TargetManagementTask TargetManagementTask { get; } = new TargetManagementTask();
-        private TargetStatusRepository TargetStatusRepository { get; } = new TargetStatusRepository();
+        private TargetConfigRepository TargetConfigRepository { get; } = new TargetConfigRepository();
         private TimeSpan CurrentOddsCheckSpan { get; } = new TimeSpan(0, 10, 0);
         private DateTime LastCheckTime { get; set; } = DateTime.MinValue;
 
@@ -31,28 +31,28 @@ namespace GreatUma
         {
             BindingSource.DataSource = BindingList;
             dataGridView1.DataSource = BindingSource;
-            TargetManagementTask.TargetStatusRepository = TargetStatusRepository;
-            AutoPurchaserMainTask.TargetStatusRepository = TargetStatusRepository;
+            TargetManagementTask.TargetConfigRepository = TargetConfigRepository;
+            AutoPurchaserMainTask.TargetConfigRepository = TargetConfigRepository;
 
             foreach (DataGridViewColumn column in dataGridView1.Columns)
             {
-                if (column.HeaderText == "3分前購入条件")
+                if (column.HeaderText == "購入オッズ条件（3分前にこのオッズ以下なら購入）")
                 {
                     continue;
                 }
                 column.ReadOnly = true;
             }
-            var targetStatus = TargetStatusRepository.ReadAll();
-            if (targetStatus != null)
+            var targetConfig = TargetConfigRepository.ReadAll();
+            if (targetConfig != null)
             {
-                if (targetStatus.HorseAndOddsConditionList != null)
+                if (targetConfig.TargetConditionList != null)
                 {
-                    foreach (var condition in targetStatus.HorseAndOddsConditionList)
+                    foreach (var condition in targetConfig.TargetConditionList)
                     {
                         BindingList.Add(condition);
                     }
                 }
-                numericUpDownPurchasePrice.Value = targetStatus.PurchasePrice;
+                numericUpDownPurchasePrice.Value = targetConfig.PurchasePrice;
             }
         }
 
@@ -85,8 +85,8 @@ namespace GreatUma
                 {
                     IsAutoUpdating = false;
                     BindingList.Clear();
-                    var currentStatus = TargetStatusRepository.ReadAll(true);
-                    var currentConditionList = currentStatus.HorseAndOddsConditionList ?? new List<HorseAndOddsCondition>();
+                    var currentStatus = TargetConfigRepository.ReadAll(true);
+                    var currentConditionList = currentStatus.TargetConditionList ?? new List<TargetCondition>();
                     foreach (var currentCondition in currentConditionList)
                     {
                         BindingList.Add(currentCondition);
@@ -204,10 +204,10 @@ namespace GreatUma
 
         private void buttonSaveConfition_Click(object sender, EventArgs e)
         {
-            var targetStatus = TargetStatusRepository.ReadAll(true);
-            targetStatus.PurchasePrice = (int)this.numericUpDownPurchasePrice.Value;
-            targetStatus.HorseAndOddsConditionList = BindingList?.Select(_ => _)?.ToList() ?? new List<HorseAndOddsCondition>();
-            TargetStatusRepository.Store(targetStatus);
+            var targetConfig = TargetConfigRepository.ReadAll(true);
+            targetConfig.PurchasePrice = (int)this.numericUpDownPurchasePrice.Value;
+            targetConfig.TargetConditionList = BindingList?.Select(_ => _)?.ToList() ?? new List<TargetCondition>();
+            TargetConfigRepository.Store(targetConfig);
         }
     }
 }

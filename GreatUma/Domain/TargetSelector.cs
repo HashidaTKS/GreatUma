@@ -21,7 +21,7 @@ namespace GreatUma.Domain
             this.TargetPlaceOdds = targetPlaceOdds; 
         }
 
-        public IEnumerable<HorseAndOddsCondition> GetTargets(DateTime currentTime)
+        public IEnumerable<TargetCondition> GetTargets(DateTime currentTime)
         {
             var scraper = this.Scraper;
             var targetDate = this.TargetDate;
@@ -41,16 +41,16 @@ namespace GreatUma.Domain
                         continue;
                     }
                     var raceData = new RaceData(holdingDatum, i + 1);
-                    var horseAndOddsCondition = GetTarget(raceData);
-                    if (horseAndOddsCondition != null)
+                    var targetCondition = GetTarget(raceData);
+                    if (targetCondition != null)
                     {
-                        yield return horseAndOddsCondition;
+                        yield return targetCondition;
                     }
                 }
             }
         }
 
-        public HorseAndOddsCondition GetTarget(RaceData raceData)
+        public TargetCondition GetTarget(RaceData raceData)
         {
             try
             {
@@ -79,9 +79,9 @@ namespace GreatUma.Domain
                 {
                     return null;
                 }
-                return new HorseAndOddsCondition()
+                return new TargetCondition()
                 {
-                    PurchaseCondition = -1,
+                    PurchaseOdds = -1,
                     RaceData = raceData,
                     MidnightWinOdds = mostPopularWin,
                     MidnightPlaceOdds = mostPopularPlace,

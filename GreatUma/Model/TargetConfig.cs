@@ -10,11 +10,11 @@ namespace GreatUma.Model
     /// <summary>
     /// TODO: 設定の側面もあるので、ステータスと呼ぶべきかどうか再検討。
     /// </summary>
-    public class TargetStatus
+    public class TargetConfig
     {
         [DataMember]
         public int PurchasePrice { get; set; } = 0;
         [DataMember]
-        public List<HorseAndOddsCondition> HorseAndOddsConditionList { get; set; }
+        public List<TargetCondition> TargetConditionList { get; set; }
     }
 }

@@ -13,13 +13,13 @@ namespace GreatUma.Domain
         private double TargetPlaceOdds { get; set; }
         internal DateTime TargetDate { get; set; }
         public bool IsInitialized { get; set; }
-        private TargetStatusRepository TargetStatusRepository { get; set; }
+        private TargetConfigRepository TargetConfigRepository { get; set; }
 
-        public TargetManager(DateTime targetDate, TargetStatusRepository targetStatusRepository, double targetPlaceOdds = 1.1)
+        public TargetManager(DateTime targetDate, TargetConfigRepository targetConfigRepository, double targetPlaceOdds = 1.1)
         {
             this.TargetDate = targetDate;
             this.TargetPlaceOdds = targetPlaceOdds;
-            this.TargetStatusRepository = targetStatusRepository;
+            this.TargetConfigRepository = targetConfigRepository;
         }
 
         public void Initialize()
@@ -36,22 +36,22 @@ namespace GreatUma.Domain
         {
             using var scraper = new Scraper();
             var selector = new TargetSelector(scraper, this.TargetDate, this.TargetPlaceOdds);
-            var targetList = selector.GetTargets(currentTime)?.OrderBy(_ => _.StartTime).ToList() ?? new List<HorseAndOddsCondition>();
-            var targetStatus = TargetStatusRepository.ReadAll(true);
-            if (targetStatus.HorseAndOddsConditionList != null)
+            var targetList = selector.GetTargets(currentTime)?.OrderBy(_ => _.StartTime).ToList() ?? new List<TargetCondition>();
+            var targetStatus = TargetConfigRepository.ReadAll(true);
+            if (targetStatus.TargetConditionList != null)
             {
                 foreach (var target in targetList)
                 {
-                    var currentCondition = targetStatus.HorseAndOddsConditionList.FirstOrDefault(_ => _.RaceData.Equals(target.RaceData));
+                    var currentCondition = targetStatus.TargetConditionList.FirstOrDefault(_ => _.RaceData.Equals(target.RaceData));
                     if (currentCondition == null)
                     {
                         continue;
                     }
-                    target.PurchaseCondition = currentCondition.PurchaseCondition;
+                    target.PurchaseOdds = currentCondition.PurchaseOdds;
                 }
             }
-            targetStatus.HorseAndOddsConditionList = targetList;
-            TargetStatusRepository.Store(targetStatus);
+            targetStatus.TargetConditionList = targetList;
+            TargetConfigRepository.Store(targetStatus);
         }
 
         public void Update(DateTime currentTime)
@@ -67,27 +67,27 @@ namespace GreatUma.Domain
         public void UpdateAllRealtimeOdds()
         {
             using var scraper = new Scraper();
-            var targetStatus = TargetStatusRepository.ReadAll(true);
+            var targetStatus = TargetConfigRepository.ReadAll(true);
             try
             {
-                if (targetStatus.HorseAndOddsConditionList == null)
+                if (targetStatus.TargetConditionList == null)
                 {
                     return;
                 }
-                foreach (var horseAndOddsCondition in targetStatus.HorseAndOddsConditionList)
+                foreach (var targetCondition in targetStatus.TargetConditionList)
                 {
-                    UpdateRealtimeOdds(scraper, horseAndOddsCondition);
+                    UpdateRealtimeOdds(scraper, targetCondition);
                 }
             }
             finally
             {
-                TargetStatusRepository.Store(targetStatus);
+                TargetConfigRepository.Store(targetStatus);
             }
         }
 
-        public static void UpdateRealtimeOdds(Scraper scraper, HorseAndOddsCondition horseAndOddsCondition)
+        public static void UpdateRealtimeOdds(Scraper scraper, TargetCondition targetCondition)
         {
-            var raceData = horseAndOddsCondition.RaceData;
+            var raceData = targetCondition.RaceData;
             //ここで取得したOddsデータには、あまり詳細なデータが入っていないことに注意。
             var placeOddsList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Place);
             var winOddsList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Win);
@@ -95,7 +95,7 @@ namespace GreatUma.Domain
             {
                 return;
             }
-            if (!int.TryParse(horseAndOddsCondition.HorseNum, out var horseNum))
+            if (!int.TryParse(targetCondition.HorseNum, out var horseNum))
             {
                 return;
             }
@@ -111,8 +111,8 @@ namespace GreatUma.Domain
             {
                 return;
             }
-            horseAndOddsCondition.CurrentWinOdds = currentWinOdds;
-            horseAndOddsCondition.CurrentPlaceOdds = currentPlaceOdds;
+            targetCondition.CurrentWinOdds = currentWinOdds;
+            targetCondition.CurrentPlaceOdds = currentPlaceOdds;
         }
     }
 }
