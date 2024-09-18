@@ -1,0 +1,10 @@
+* 本プログラムはSelenium + Chrome Driverを使用しているため、最新のChrome + Chrome Driverが必要
+  * まだインストールしていない場合、Google Chromeをインストールする
+  * Google Chromeを最新版にする
+    * 通常は自動更新がonになっているため、Google Chromeを起動すれば
+  * 最新のChrome Driverを入手する
+    * https://googlechromelabs.github.io/chrome-for-testing/
+    * 上記のサイトから、chromedriver/win64のURLをコピーしダウンロードする
+    * ダウンロードしたZIPを展開するとchromedriver.exeがあるので、それをGreatUma.exeと同じフォルダにコピーする
+    * Google ChromeのバージョンとChrome Driverのバージョンは一致している必要があることに注意
+  * もし、ChromeDriverが古いといったエラーになる場合は、上記のChromeDriverの入手手順を再度実施する。
