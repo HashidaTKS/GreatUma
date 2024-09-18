@@ -10,15 +10,13 @@ namespace GreatUma.Domain
 {
     public class TargetManager
     {
-        private double TargetPlaceOdds { get; set; }
         internal DateTime TargetDate { get; set; }
         public bool IsInitialized { get; set; }
         private TargetConfigRepository TargetConfigRepository { get; set; }
 
-        public TargetManager(DateTime targetDate, TargetConfigRepository targetConfigRepository, double targetPlaceOdds = 1.1)
+        public TargetManager(DateTime targetDate, TargetConfigRepository targetConfigRepository)
         {
             this.TargetDate = targetDate;
-            this.TargetPlaceOdds = targetPlaceOdds;
             this.TargetConfigRepository = targetConfigRepository;
         }
 
@@ -35,9 +33,9 @@ namespace GreatUma.Domain
         public void SetTargets(DateTime currentTime)
         {
             using var scraper = new Scraper();
-            var selector = new TargetSelector(scraper, this.TargetDate, this.TargetPlaceOdds);
-            var targetList = selector.GetTargets(currentTime)?.OrderBy(_ => _.StartTime).ToList() ?? new List<TargetCondition>();
             var targetStatus = TargetConfigRepository.ReadAll(true);
+            var selector = new TargetSelector(scraper, this.TargetDate, targetStatus.TargetPlaceOdds);
+            var targetList = selector.GetTargets(currentTime)?.OrderBy(_ => _.StartTime).ToList() ?? new List<TargetCondition>();
             if (targetStatus.TargetConditionList != null)
             {
                 foreach (var target in targetList)

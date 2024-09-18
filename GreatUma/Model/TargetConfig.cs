@@ -13,6 +13,8 @@ namespace GreatUma.Model
     public class TargetConfig
     {
         [DataMember]
+        public double TargetPlaceOdds { get; set; } = 1.1;
+        [DataMember]
         public int PurchasePrice { get; set; } = 0;
         [DataMember]
         public List<TargetCondition> TargetConditionList { get; set; }

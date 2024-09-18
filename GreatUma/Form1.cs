@@ -25,6 +25,12 @@ namespace GreatUma
         public Form1()
         {
             InitializeComponent();
+            BindingSource.ListChanged += ListChangedEventHandler;
+        }
+
+        private void ListChangedEventHandler(object? sender, ListChangedEventArgs e)
+        {
+            buttonSaveConfition.Enabled = true;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -36,7 +42,7 @@ namespace GreatUma
 
             foreach (DataGridViewColumn column in dataGridView1.Columns)
             {
-                if (column.HeaderText == "購入オッズ条件（3分前にこのオッズ以下なら購入）")
+                if (column.HeaderText == "購入オッズ（変更可）")
                 {
                     continue;
                 }
@@ -53,7 +59,9 @@ namespace GreatUma
                     }
                 }
                 numericUpDownPurchasePrice.Value = targetConfig.PurchasePrice;
+                numericUpDownTargetPlaceOdds.Value = (decimal)targetConfig.TargetPlaceOdds;
             }
+            buttonSaveConfition.Enabled = false;
         }
 
         private void UpdateButton_Click(object sender, EventArgs e)
@@ -68,6 +76,7 @@ namespace GreatUma
             decimal value = numericUpDownPurchasePrice.Value;
             decimal roundedValue = Math.Floor(value / 100) * 100;
             numericUpDownPurchasePrice.Value = roundedValue;
+            buttonSaveConfition.Enabled = true;
         }
 
         private void ButtonLoginConfig_Click(object sender, EventArgs e)
@@ -91,6 +100,7 @@ namespace GreatUma
                     {
                         BindingList.Add(currentCondition);
                     }
+                    oddsDateTimeLabel.Text = DateTime.Now.ToString();
                 }
             }
             if (!IsAutoUpdating)
@@ -123,7 +133,6 @@ namespace GreatUma
                     buttonStartAutoPurchase.Enabled = true;
                 }
             }
-
         }
 
         private void ButtonUpdateStatus_Click(object sender, EventArgs e)
@@ -206,8 +215,15 @@ namespace GreatUma
         {
             var targetConfig = TargetConfigRepository.ReadAll(true);
             targetConfig.PurchasePrice = (int)this.numericUpDownPurchasePrice.Value;
+            targetConfig.TargetPlaceOdds = (double)this.numericUpDownTargetPlaceOdds.Value;
             targetConfig.TargetConditionList = BindingList?.Select(_ => _)?.ToList() ?? new List<TargetCondition>();
             TargetConfigRepository.Store(targetConfig);
+            buttonSaveConfition.Enabled = false;
+        }
+
+        private void buttonRemoveInfo_Click(object sender, EventArgs e)
+        {
+            BindingList.Clear();
         }
     }
 }
