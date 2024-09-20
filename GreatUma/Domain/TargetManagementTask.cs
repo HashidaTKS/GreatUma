@@ -29,6 +29,14 @@ namespace GreatUma.Domain
             }
         }
 
+        public void SetInitialized(bool initialized)
+        {
+            lock (LockObject)
+            {
+                TargetManager.IsInitialized = initialized;
+            }
+        }
+
         public void Run()
         {
             if (Running)
