@@ -182,7 +182,7 @@ namespace GreatUma
                 MessageBox.Show("ログイン情報がないため残高を取得できません。");
                 return;
             }
-            var autoPurchaser = new AutoPurchaser(loginData);
+            using var autoPurchaser = new AutoPurchaser(loginData);
             int currentPrice = 0;
             try
             {
@@ -193,7 +193,6 @@ namespace GreatUma
                 MessageBox.Show("残高取得中にエラーが発生しました。");
             }
             textBoxCurrentPrice.Text = currentPrice.ToString();
-            //textBoxCurrentPrice.Text = "5000";
         }
 
         private void ButtonSetPurchasePrice_Click(object sender, EventArgs e)

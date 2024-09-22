@@ -29,7 +29,6 @@ namespace GreatUma.Domain
             LoggerWrapper.Info("Start AutoPurcaserMainTask");
             CancellationTokenSource = new CancellationTokenSource();
             CancelToken = CancellationTokenSource.Token;
-            var loginConfig = new LoginConfigRepository().ReadAll();
             Task.Run(() =>
             {
                 try
@@ -38,27 +37,22 @@ namespace GreatUma.Domain
                     {
                         return;
                     }
-                    using (var scraper = new Scraper())
-                    using (var autoPurchaser = new AutoPurchaser(loginConfig))
+                    while (true)
                     {
-                        while (true)
+                        try
                         {
-                            try
+                            PurchaseIfNeed();
+                        }
+                        catch (Exception ex)
+                        {
+                            LoggerWrapper.Warn(ex);
+                        }
+                        for (var i = 0; i < 30; i++)
+                        {
+                            Thread.Sleep(1 * 1000);
+                            if (CancelToken.IsCancellationRequested)
                             {
-                                PurchaseIfNeed(scraper, autoPurchaser);
-                            }
-                            catch (Exception ex)
-                            {
-                                LoggerWrapper.Warn(ex);
-                            }
-
-                            for (var i = 0; i < 30; i++)
-                            {
-                                Thread.Sleep(1 * 1000);
-                                if (CancelToken.IsCancellationRequested)
-                                {
-                                    return;
-                                }
+                                return;
                             }
                         }
                     }
@@ -86,7 +80,7 @@ namespace GreatUma.Domain
             CancellationTokenSource.Cancel();
         }
 
-        private void PurchaseIfNeed(Scraper scraper, AutoPurchaser autoPurchaser)
+        private void PurchaseIfNeed()
         {
             try
             {
@@ -113,8 +107,7 @@ namespace GreatUma.Domain
                     {
                         return;
                     }
-                    TargetManager.UpdateRealtimeOdds(scraper, condition);
-                    if(condition.StartTime > DateTime.Now.AddMinutes(3))
+                    if (condition.StartTime > DateTime.Now.AddMinutes(3))
                     {
                         //3分前より近くなったら購入する
                         return;
@@ -125,17 +118,21 @@ namespace GreatUma.Domain
                         return;
                     }
 #endif
-                    if (condition.PurchaseOdds < 1 || 
+                    using var scraper = new Scraper();
+                    TargetManager.UpdateRealtimeOdds(scraper, condition);
+
+                    if (condition.PurchaseOdds < 1 ||
                         condition.CurrentWinOdds.LowOdds < condition.PurchaseOdds)
                     {
+                        AlreadyPurchasedRaceHashSet.Add(condition.RaceData);
                         return;
                     }
                     var betDatum = new BetDatum(
-                        condition.RaceData, 
-                        condition.MidnightWinOdds.HorseData.Select(_ => _.Number).ToList(), 
-                        price, 
-                        condition.CurrentWinOdds.LowOdds, 
-                        condition.CurrentWinOdds.LowOdds, 
+                        condition.RaceData,
+                        condition.MidnightWinOdds.HorseData.Select(_ => _.Number).ToList(),
+                        price,
+                        condition.CurrentWinOdds.LowOdds,
+                        condition.CurrentWinOdds.LowOdds,
                         TicketType.Win);
                     var betData = new List<BetDatum>
                     {
@@ -144,6 +141,8 @@ namespace GreatUma.Domain
                     if (betData != null && betData.Any())
                     {
                         LoggerWrapper.Info($"Bet target(s) exist");
+                        var loginConfig = new LoginConfigRepository().ReadAll();
+                        using var autoPurchaser = new AutoPurchaser(loginConfig);
                         if (autoPurchaser.Purchase(betData))
                         {
                             AlreadyPurchasedRaceHashSet.Add(condition.RaceData);

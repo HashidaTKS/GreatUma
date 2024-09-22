@@ -16,18 +16,9 @@ namespace GreatUma.Domain
         public bool Running => CancellationTokenSource != null;
         private CancellationTokenSource CancellationTokenSource { get; set; }
         private CancellationToken CancelToken { get; set; }
-        private Scraper Scraper { get; set; }
         private TargetManager TargetManager { get; set; }
         private object LockObject { get; } = new object();
         public TargetConfigRepository TargetConfigRepository { get; set; }
-
-        ~TargetManagementTask()
-        {
-            if (Scraper != null)
-            {
-                Scraper.Dispose();
-            }
-        }
 
         public void SetInitialized(bool initialized)
         {
@@ -46,10 +37,6 @@ namespace GreatUma.Domain
             LoggerWrapper.Info("Start TargetManagementTask");
             CancellationTokenSource = new CancellationTokenSource();
             CancelToken = CancellationTokenSource.Token;
-            if (Scraper == null)
-            {
-                Scraper = new Scraper();
-            }
             lock (LockObject)
             {
                 if (TargetManager == null)
