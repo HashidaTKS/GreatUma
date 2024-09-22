@@ -87,6 +87,18 @@ namespace GreatUma
 
         private void Timer1_Tick(object sender, EventArgs e)
         {
+            if (LastCheckTime.Date < DateTime.Today && 
+                DateTime.Now >= DateTime.Today.AddMinutes(30) &&
+                DateTime.Now < DateTime.Today.AddHours(2))
+            {
+                // 0時30以降かつ2時未満だったら、データを自動で取得する。
+                // 夜間自動取得処理
+                LastCheckTime = DateTime.Now;
+                TargetManagementTask.Run();
+                buttonStartUpdate.Enabled = false;
+                IsAutoUpdating = true;
+            } 
+
             if (IsAutoUpdating)
             {
                 buttonStartUpdate.Enabled = false;
@@ -101,6 +113,7 @@ namespace GreatUma
                         BindingList.Add(currentCondition);
                     }
                     oddsDateTimeLabel.Text = DateTime.Now.ToString();
+                    LastCheckTime = DateTime.Now;
                 }
             }
             if (!IsAutoUpdating)
