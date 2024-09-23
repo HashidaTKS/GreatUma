@@ -20,14 +20,6 @@ namespace GreatUma.Domain
         private object LockObject { get; } = new object();
         public TargetConfigRepository TargetConfigRepository { get; set; }
 
-        public void SetInitialized(bool initialized)
-        {
-            lock (LockObject)
-            {
-                TargetManager.IsInitialized = initialized;
-            }
-        }
-
         public void Run()
         {
             if (Running)
@@ -59,11 +51,7 @@ namespace GreatUma.Domain
                     }
                     lock (LockObject)
                     {
-                        if (!TargetManager.IsInitialized)
-                        {
-                            TargetManager.Initialize();
-                        }
-                        TargetManager.Update(DateTime.Now);
+                        TargetManager.SetTargets(DateTime.Now);
                     }
                 }
                 catch (Exception ex)

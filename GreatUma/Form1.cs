@@ -226,11 +226,6 @@ namespace GreatUma
         private void buttonSaveConfition_Click(object sender, EventArgs e)
         {
             var targetConfig = TargetConfigRepository.ReadAll(true);
-            if (targetConfig.TargetPlaceOdds != (double)this.numericUpDownTargetPlaceOdds.Value)
-            {
-                //Žæ“¾ðŒ‚ª•Ï‚í‚Á‚Ä‚¢‚é‚Ì‚ÅAÅ‰‚©‚çÄŽæ“¾‚·‚é
-                TargetManagementTask.SetInitialized(false);
-            }
             targetConfig.PurchasePrice = (int)this.numericUpDownPurchasePrice.Value;
             targetConfig.TargetPlaceOdds = (double)this.numericUpDownTargetPlaceOdds.Value;
             targetConfig.TargetConditionList = BindingList?.Select(_ => _)?.ToList() ?? new List<TargetCondition>();

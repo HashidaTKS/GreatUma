@@ -23,10 +23,12 @@ namespace GreatUma.Model
         public string HorseNum => CurrentWinOdds?.HorseData[0].Number.ToString() ?? "";
         [DisplayName("騎手")]
         public string Jockey => CurrentWinOdds?.HorseData[0].Jockey?.ToString() ?? "";
+        [DisplayName("初回に条件を満たした時刻")]
+        public DateTime MatchedDateTime { get; set; } = DateTime.MinValue;
         [DisplayName("初回取得時オッズ")]
-        public string MidnightOdds => CurrentWinOdds == null || MidnightPlaceOdds == null ?
+        public string FirstMatchedOdds => CurrentWinOdds == null || MatchedPlaceOdds == null ?
             "" :
-            $"単勝:{MidnightWinOdds.LowOdds} 複勝:{MidnightPlaceOdds.LowOdds} - {MidnightPlaceOdds.HighOdds}";
+            $"単勝:{MatchedWinOdds.LowOdds} 複勝:{MatchedPlaceOdds.LowOdds} - {MatchedPlaceOdds.HighOdds}";
         [DisplayName("現在オッズ")]
         public string CurrentOdds => CurrentWinOdds == null || CurrentPlaceOdds == null ?
             "" :
@@ -43,14 +45,14 @@ namespace GreatUma.Model
         /// </summary>
         [Browsable(false)]
         [DataMember]
-        public OddsDatum MidnightWinOdds { get; set; }
+        public OddsDatum MatchedWinOdds { get; set; }
         /// <summary>
         /// 0時時点の複勝オッズ。馬などの詳細なデータが必要な場合はこちらを使う。
         /// 実際には、0時時点ではなく、最初にこのクラスが作成された際のオッズであることに注意。
         /// </summary>
         [Browsable(false)]
         [DataMember]
-        public OddsDatum MidnightPlaceOdds { get; set; }
+        public OddsDatum MatchedPlaceOdds { get; set; }
         /// <summary>
         /// 現在の単勝オッズ。Midnightの方と比べ、馬などの詳細なデータが入っていない可能性があることに注意。
         /// 馬などの詳細なデータが必要な場合はMidnightWinOddsの方を使う。

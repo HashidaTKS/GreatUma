@@ -129,7 +129,7 @@ namespace GreatUma.Domain
                     }
                     var betDatum = new BetDatum(
                         condition.RaceData,
-                        condition.MidnightWinOdds.HorseData.Select(_ => _.Number).ToList(),
+                        condition.MatchedWinOdds.HorseData.Select(_ => _.Number).ToList(),
                         price,
                         condition.CurrentWinOdds.LowOdds,
                         condition.CurrentWinOdds.LowOdds,
