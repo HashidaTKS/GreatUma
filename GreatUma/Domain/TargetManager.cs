@@ -64,10 +64,12 @@ namespace GreatUma.Domain
                         target.MatchedPlaceOdds.HighOdds = currentCondition.MatchedPlaceOdds.HighOdds;
                         target.MatchedPlaceOdds.LowOdds = currentCondition.MatchedPlaceOdds.LowOdds;
                         target.PurchaseOdds = currentCondition.PurchaseOdds;
+                        targetStatus.TargetConditionList.Remove(currentCondition);
                     }
                 }
+                targetList = targetList.Concat(targetStatus.TargetConditionList).ToList();
             }
-            targetStatus.TargetConditionList = targetList;
+            targetStatus.TargetConditionList = targetList.OrderBy(_ => _.StartTime).ToList();
             TargetConfigRepository.Store(targetStatus);
         }
 
