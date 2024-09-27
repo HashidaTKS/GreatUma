@@ -51,7 +51,7 @@ namespace GreatUma.Models
             Title = HoldingDatum.TitleList[raceNumber - 1];
         }
 
-        private string GetRaceIdString()
+        public string GetRaceIdString()
         {
             if (HoldingDatum.Region.RagionType == RegionType.Central)
             {

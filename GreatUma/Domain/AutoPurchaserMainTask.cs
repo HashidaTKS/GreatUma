@@ -18,7 +18,7 @@ namespace GreatUma.Domain
         private CancellationTokenSource CancellationTokenSource { get; set; }
         private CancellationToken CancelToken { get; set; }
         public TargetConfigRepository TargetConfigRepository { get; set; }
-        private HashSet<RaceData> AlreadyPurchasedRaceHashSet { get; set; } = new HashSet<RaceData>();
+        private HashSet<string> AlreadyPurchasedRaceHashSet { get; set; } = new HashSet<string>();
 
         public void Run()
         {
@@ -103,7 +103,7 @@ namespace GreatUma.Domain
             {
                 try
                 {
-                    if (AlreadyPurchasedRaceHashSet.Contains(condition.RaceData))
+                    if (AlreadyPurchasedRaceHashSet.Contains(condition.Id))
                     {
                         return;
                     }
@@ -118,13 +118,16 @@ namespace GreatUma.Domain
                         return;
                     }
 #endif
+                    if (condition.PurchaseOdds < 1)
+                    {
+                        return;
+                    }
                     using var scraper = new Scraper();
                     TargetManager.UpdateRealtimeOdds(scraper, condition);
 
-                    if (condition.PurchaseOdds < 1 ||
-                        condition.CurrentWinOdds.LowOdds < condition.PurchaseOdds)
+                    if(condition.CurrentWinOdds.LowOdds < condition.PurchaseOdds)
                     {
-                        AlreadyPurchasedRaceHashSet.Add(condition.RaceData);
+                        AlreadyPurchasedRaceHashSet.Add(condition.Id);
                         return;
                     }
                     var betDatum = new BetDatum(
@@ -145,7 +148,7 @@ namespace GreatUma.Domain
                         using var autoPurchaser = new AutoPurchaser(loginConfig);
                         if (autoPurchaser.Purchase(betData))
                         {
-                            AlreadyPurchasedRaceHashSet.Add(condition.RaceData);
+                            AlreadyPurchasedRaceHashSet.Add(condition.Id);
                         }
                     }
                 }

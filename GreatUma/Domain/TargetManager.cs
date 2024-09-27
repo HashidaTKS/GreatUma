@@ -43,16 +43,28 @@ namespace GreatUma.Domain
             {
                 foreach (var target in targetList)
                 {
-                    var currentCondition = targetStatus.TargetConditionList.FirstOrDefault(_ => _.RaceData.Equals(target.RaceData));
+                    var currentCondition = targetStatus.TargetConditionList.FirstOrDefault(_ => _.Id == target.Id);
                     if (currentCondition == null)
                     {
-                        target.MatchedDateTime = DateTime.Now;
+                        target.MatchedDateTime = currentTime;
                         target.MatchedWinOdds.HighOdds = target.CurrentWinOdds.HighOdds;
                         target.MatchedWinOdds.LowOdds = target.CurrentWinOdds.LowOdds;
                         target.MatchedPlaceOdds.HighOdds = target.CurrentPlaceOdds.HighOdds;
                         target.MatchedPlaceOdds.LowOdds = target.CurrentPlaceOdds.LowOdds;
                     }
-                    target.PurchaseOdds = currentCondition.PurchaseOdds;
+                    else
+                    {
+                        target.MatchedDateTime = currentCondition.MatchedDateTime;
+                        if (target.MatchedDateTime == DateTime.MinValue)
+                        {
+                            target.MatchedDateTime = currentTime;
+                        }
+                        target.MatchedWinOdds.HighOdds = currentCondition.MatchedWinOdds.HighOdds;
+                        target.MatchedWinOdds.LowOdds = currentCondition.MatchedWinOdds.LowOdds;
+                        target.MatchedPlaceOdds.HighOdds = currentCondition.MatchedPlaceOdds.HighOdds;
+                        target.MatchedPlaceOdds.LowOdds = currentCondition.MatchedPlaceOdds.LowOdds;
+                        target.PurchaseOdds = currentCondition.PurchaseOdds;
+                    }
                 }
             }
             targetStatus.TargetConditionList = targetList;
@@ -72,11 +84,48 @@ namespace GreatUma.Domain
             {
                 return;
             }
-            foreach (var targetCondition in currentCondition.TargetConditionList)
+            foreach (var group in currentCondition.TargetConditionList.GroupBy(_ => _.RaceData.GetRaceIdString()))
             {
-                UpdateRealtimeOdds(scraper, targetCondition);
+                var raceData = group.FirstOrDefault()?.RaceData;
+                if (raceData == null)
+                {
+                    continue;
+                }
+                UpdateRealtimeOdds(scraper, raceData, group);
             }
             WholeTargetConditionsRepository.Store(currentWholeConditions);
+        }
+
+        public static void UpdateRealtimeOdds(Scraper scraper, RaceData raceData, IEnumerable<TargetCondition> targetConditions)
+        {
+            //ここで取得したOddsデータには、あまり詳細なデータが入っていないことに注意。
+            var placeOddsList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Place);
+            var winOddsList = scraper.GetRealTimeOdds(raceData, Utils.TicketType.Win);
+            if (placeOddsList == null || winOddsList == null)
+            {
+                return;
+            }
+            foreach (var targetCondition in targetConditions)
+            {
+                if (!int.TryParse(targetCondition.HorseNum, out var horseNum))
+                {
+                    continue;
+                }
+                // 複勝のオッズなので、馬は一頭。（馬連なら二頭、三連複なら三頭になる。）
+                var currentPlaceOdds = placeOddsList
+                    .Where(_ => _.HorseData.Count == 1)?
+                    .FirstOrDefault(_ => _.HorseData[0].Number == horseNum);
+                var currentWinOdds = winOddsList
+                    .Where(_ => _.HorseData.Count == 1)?
+                    .FirstOrDefault(_ => _.HorseData[0].Number == horseNum);
+
+                if (currentPlaceOdds == null || currentWinOdds == null)
+                {
+                    continue;
+                }
+                targetCondition.CurrentWinOdds = currentWinOdds;
+                targetCondition.CurrentPlaceOdds = currentPlaceOdds;
+            }
         }
 
         public static void UpdateRealtimeOdds(Scraper scraper, TargetCondition targetCondition)
@@ -113,7 +162,7 @@ namespace GreatUma.Domain
         {
             var currentWholeConditions = WholeTargetConditionsRepository.ReadAll(true);
             var currentCondition = currentWholeConditions?.TargetConditionsOfDay?.FirstOrDefault(_ => _.TargetDate == TargetDate);
-            if (currentWholeConditions != null)
+            if (currentCondition != null)
             {
                 return;
             }
@@ -136,10 +185,10 @@ namespace GreatUma.Domain
                 {
                     var startTime = holdingDatum.StartTimeList[i];
                     var raceData = new RaceData(holdingDatum, i + 1);
-                    var targetCondition = CreateTargetCondition(raceData, scraper);
+                    var targetCondition = CreateTargetConditions(raceData, scraper);
                     if (targetCondition != null)
                     {
-                        targetConditionOfDay.TargetConditionList.Add(targetCondition);
+                        targetConditionOfDay.TargetConditionList.AddRange(targetCondition);
                     }
                 }
             }
@@ -150,7 +199,7 @@ namespace GreatUma.Domain
         public IEnumerable<TargetCondition> SearchMatchedTargetConditions(DateTime currentTime)
         {
             var currentWholeConditions = WholeTargetConditionsRepository.ReadAll(true);
-            var currentCondition = currentWholeConditions.TargetConditionsOfDay.FirstOrDefault(_ => _.TargetDate == TargetDate);
+            var currentCondition = currentWholeConditions.TargetConditionsOfDay?.FirstOrDefault(_ => _.TargetDate == TargetDate);
             if (currentCondition == null)
             {
                 yield break;
@@ -160,51 +209,52 @@ namespace GreatUma.Domain
                 targetStatus.TargetPlaceOdds;
             var currentTargets = currentCondition.TargetConditionList
                 .Where(_ => _.StartTime > currentTime)
-                .Where(_ => _.CurrentPlaceOdds.HighOdds > targetPlaceOdds);
+                .Where(_ => _.CurrentPlaceOdds.HighOdds <= targetPlaceOdds);
             foreach (var target in currentTargets)
             {
                 yield return target;
             }
         }
 
-        public TargetCondition CreateTargetCondition(RaceData raceData, Scraper scraper)
+        public IEnumerable<TargetCondition> CreateTargetConditions(RaceData raceData, Scraper scraper)
         {
+            List<OddsDatum> placeOddsList;
+            List<OddsDatum> winOddsList;
+            List<HorseDatum> horseData;
             try
             {
-                var placeOddsList = scraper.GetOdds(raceData, Utils.TicketType.Place);
-                var winOddsList = scraper.GetOdds(raceData, Utils.TicketType.Win);
-                var horseData = scraper.GetHorseInfo(raceData);
-                var mostPopularWin = winOddsList.OrderBy(_ => _.LowOdds).FirstOrDefault();
-                if (mostPopularWin == null)
-                {
-                    return null;
-                }
-                if (mostPopularWin.HorseData.Count != 1)
-                {
-                    // 複勝のオッズなので、馬は一頭。（馬連なら二頭、三連複なら三頭になる。）
-                    return null;
-                }
-                var mostPopularPlace = placeOddsList
-                        .Where(_ => _.HorseData.Count == 1)?
-                        .FirstOrDefault(_ => _.HorseData[0].Number == mostPopularWin.HorseData[0].Number);
-                if (mostPopularPlace == null)
-                {
-                    return null;
-                }
-                return new TargetCondition()
-                {
-                    PurchaseOdds = -1,
-                    RaceData = raceData,
-                    MatchedWinOdds = mostPopularWin,
-                    MatchedPlaceOdds = mostPopularPlace,
-                    CurrentWinOdds = mostPopularWin,
-                    CurrentPlaceOdds = mostPopularPlace,
-                };
+                placeOddsList = scraper.GetOdds(raceData, Utils.TicketType.Place);
+                winOddsList = scraper.GetOdds(raceData, Utils.TicketType.Win);
+                horseData = scraper.GetHorseInfo(raceData);
             }
             catch (Exception ex)
             {
                 LoggerWrapper.Error(ex);
-                return null;
+                yield break;
+            }
+            foreach (var winOdds in winOddsList)
+            {
+                if (winOdds.HorseData.Count != 1)
+                {
+                    // 複勝のオッズなので、馬は一頭。（馬連なら二頭、三連複なら三頭になる。）
+                    continue;
+                }
+                var popularPlace = placeOddsList
+                        .Where(_ => _.HorseData.Count == 1)?
+                        .FirstOrDefault(_ => _.HorseData[0].Number == winOdds.HorseData[0].Number);
+                if (popularPlace == null)
+                {
+                    continue;
+                }
+                yield return new TargetCondition()
+                {
+                    PurchaseOdds = -1,
+                    RaceData = raceData,
+                    MatchedWinOdds = winOdds,
+                    MatchedPlaceOdds = popularPlace,
+                    CurrentWinOdds = winOdds,
+                    CurrentPlaceOdds = popularPlace,
+                };
             }
         }
     }

@@ -23,9 +23,10 @@ namespace GreatUma.Model
         public string HorseNum => CurrentWinOdds?.HorseData[0].Number.ToString() ?? "";
         [DisplayName("騎手")]
         public string Jockey => CurrentWinOdds?.HorseData[0].Jockey?.ToString() ?? "";
-        [DisplayName("初回に条件を満たした時刻")]
+        [DisplayName("最初に条件を満たした時刻")]
+        [DataMember]
         public DateTime MatchedDateTime { get; set; } = DateTime.MinValue;
-        [DisplayName("初回取得時オッズ")]
+        [DisplayName("最初に条件を満たした際のオッズ")]
         public string FirstMatchedOdds => CurrentWinOdds == null || MatchedPlaceOdds == null ?
             "" :
             $"単勝:{MatchedWinOdds.LowOdds} 複勝:{MatchedPlaceOdds.LowOdds} - {MatchedPlaceOdds.HighOdds}";
@@ -67,5 +68,8 @@ namespace GreatUma.Model
         [Browsable(false)]
         [DataMember]
         public OddsDatum CurrentPlaceOdds { get; set; }
+
+        [Browsable(false)]
+        public string Id => $"{RaceData?.GetRaceIdString() ?? ""}_{HorseNum}";
     }
 }
