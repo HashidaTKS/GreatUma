@@ -17,6 +17,6 @@ namespace GreatUma.Model
         [DataMember]
         public int PurchasePrice { get; set; } = 0;
         [DataMember]
-        public List<TargetCondition> TargetConditionList { get; set; }
+        public List<TargetCondition> TargetConditionList { get; set; } = new List<TargetCondition>();
     }
 }

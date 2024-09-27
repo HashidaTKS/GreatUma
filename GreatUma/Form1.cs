@@ -16,7 +16,7 @@ namespace GreatUma
         private AutoPurchaserMainTask AutoPurchaserMainTask { get; } = new AutoPurchaserMainTask();
         private TargetManagementTask TargetManagementTask { get; } = new TargetManagementTask();
         private TargetConfigRepository TargetConfigRepository { get; } = new TargetConfigRepository();
-        private TimeSpan CurrentOddsCheckSpan { get; } = new TimeSpan(0, 10, 0);
+        private TimeSpan AutoUpdateTimeSpan { get; } = new TimeSpan(0, 30, 0);
         private DateTime LastCheckTime { get; set; } = DateTime.MinValue;
 
         private bool IsAutoUpdating { get; set; }
@@ -64,10 +64,10 @@ namespace GreatUma
             buttonSaveConfition.Enabled = false;
         }
 
-        private void UpdateButton_Click(object sender, EventArgs e)
+        private void ButtonAutoUpdate_Click(object sender, EventArgs e)
         {
             TargetManagementTask.Run();
-            buttonStartUpdate.Enabled = false;
+            buttonAutoUpdate.Enabled = false;
             IsAutoUpdating = true;
         }
 
@@ -87,45 +87,32 @@ namespace GreatUma
 
         private void Timer1_Tick(object sender, EventArgs e)
         {
-            if (LastCheckTime.Date < DateTime.Today && 
-                DateTime.Now >= DateTime.Today.AddMinutes(30) &&
-                DateTime.Now < DateTime.Today.AddHours(2))
+            if (!TargetManagementTask.Running &&
+                TargetManagementTask.LastCheckTime > LastCheckTime)
             {
-                // 0時30以降かつ2時未満だったら、データを自動で取得する。
-                // 夜間自動取得処理
-                LastCheckTime = DateTime.Now;
-                TargetManagementTask.Run();
-                buttonStartUpdate.Enabled = false;
-                IsAutoUpdating = true;
-            } 
+                BindingList.Clear();
+                var currentStatus = TargetConfigRepository.ReadAll(true);
+                var currentConditionList = currentStatus.TargetConditionList ?? new List<TargetCondition>();
+                foreach (var currentCondition in currentConditionList)
+                {
+                    BindingList.Add(currentCondition);
+                }
+                oddsDateTimeLabel.Text = TargetManagementTask.LastCheckTime.ToString();
+                LastCheckTime = TargetManagementTask.LastCheckTime;
+            }
 
             if (IsAutoUpdating)
             {
-                buttonStartUpdate.Enabled = false;
-                if (!TargetManagementTask.Running)
+                buttonAutoUpdate.Enabled = false;
+                if (!TargetManagementTask.Running &&
+                    AutoUpdateTimeSpan < DateTime.Now - LastCheckTime)
                 {
-                    IsAutoUpdating = false;
-                    BindingList.Clear();
-                    var currentStatus = TargetConfigRepository.ReadAll(true);
-                    var currentConditionList = currentStatus.TargetConditionList ?? new List<TargetCondition>();
-                    foreach (var currentCondition in currentConditionList)
-                    {
-                        BindingList.Add(currentCondition);
-                    }
-                    oddsDateTimeLabel.Text = DateTime.Now.ToString();
-                    LastCheckTime = DateTime.Now;
+                    TargetManagementTask.Run();
                 }
             }
-            if (!IsAutoUpdating)
+            else
             {
-                if (TargetManagementTask.Running)
-                {
-                    buttonStartUpdate.Enabled = false;
-                }
-                else
-                {
-                    buttonStartUpdate.Enabled = true;
-                }
+                buttonAutoUpdate.Enabled = true;
             }
             if (IsAutoPurchasing)
             {
@@ -148,7 +135,7 @@ namespace GreatUma
             }
         }
 
-        private void ButtonUpdateStatus_Click(object sender, EventArgs e)
+        private void ButtonStopUpdate_Click(object sender, EventArgs e)
         {
             TargetManagementTask.Stop();
             IsAutoUpdating = false;
@@ -236,6 +223,16 @@ namespace GreatUma
         private void buttonRemoveInfo_Click(object sender, EventArgs e)
         {
             BindingList.Clear();
+        }
+
+        private void ButtonManualUpdate_Click(object sender, EventArgs e)
+        {
+            TargetManagementTask.Run();
+        }
+
+        private void numericUpDownTargetPlaceOdds_ValueChanged(object sender, EventArgs e)
+        {
+            buttonSaveConfition.Enabled = true;
         }
     }
 }

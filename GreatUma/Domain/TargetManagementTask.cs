@@ -19,6 +19,7 @@ namespace GreatUma.Domain
         private TargetManager TargetManager { get; set; }
         private object LockObject { get; } = new object();
         public TargetConfigRepository TargetConfigRepository { get; set; }
+        public DateTime LastCheckTime { get; set; } 
 
         public void Run()
         {
@@ -52,6 +53,7 @@ namespace GreatUma.Domain
                     lock (LockObject)
                     {
                         TargetManager.SetTargets(DateTime.Now);
+                        LastCheckTime = DateTime.Now;
                     }
                 }
                 catch (Exception ex)

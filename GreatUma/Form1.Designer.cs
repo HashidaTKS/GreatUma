@@ -30,7 +30,7 @@
         {
             components = new System.ComponentModel.Container();
             dataGridView1 = new DataGridView();
-            buttonStartUpdate = new Button();
+            buttonManualUpdate = new Button();
             label1 = new Label();
             label2 = new Label();
             label3 = new Label();
@@ -52,6 +52,7 @@
             numericUpDownTargetPlaceOdds = new NumericUpDown();
             label6 = new Label();
             buttonRemoveInfo = new Button();
+            buttonAutoUpdate = new Button();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownRatio).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownPurchasePrice).BeginInit();
@@ -67,15 +68,15 @@
             dataGridView1.Size = new Size(976, 332);
             dataGridView1.TabIndex = 0;
             // 
-            // buttonStartUpdate
+            // buttonManualUpdate
             // 
-            buttonStartUpdate.Location = new Point(590, 415);
-            buttonStartUpdate.Name = "buttonStartUpdate";
-            buttonStartUpdate.Size = new Size(75, 23);
-            buttonStartUpdate.TabIndex = 1;
-            buttonStartUpdate.Text = "情報更新";
-            buttonStartUpdate.UseVisualStyleBackColor = true;
-            buttonStartUpdate.Click += UpdateButton_Click;
+            buttonManualUpdate.Location = new Point(651, 415);
+            buttonManualUpdate.Name = "buttonManualUpdate";
+            buttonManualUpdate.Size = new Size(90, 23);
+            buttonManualUpdate.TabIndex = 1;
+            buttonManualUpdate.Text = "手動情報更新";
+            buttonManualUpdate.UseVisualStyleBackColor = true;
+            buttonManualUpdate.Click += ButtonManualUpdate_Click;
             // 
             // label1
             // 
@@ -179,11 +180,11 @@
             // 
             // buttonSaveConfition
             // 
-            buttonSaveConfition.Location = new Point(887, 415);
+            buttonSaveConfition.Location = new Point(886, 415);
             buttonSaveConfition.Name = "buttonSaveConfition";
             buttonSaveConfition.Size = new Size(75, 23);
             buttonSaveConfition.TabIndex = 14;
-            buttonSaveConfition.Text = "状態保存";
+            buttonSaveConfition.Text = "条件保存";
             buttonSaveConfition.UseVisualStyleBackColor = true;
             buttonSaveConfition.Click += buttonSaveConfition_Click;
             // 
@@ -199,22 +200,22 @@
             // timer1
             // 
             timer1.Enabled = true;
-            timer1.Interval = 10000;
+            timer1.Interval = 3000;
             timer1.Tick += Timer1_Tick;
             // 
             // buttonStopAutoupdate
             // 
-            buttonStopAutoupdate.Location = new Point(671, 415);
+            buttonStopAutoupdate.Location = new Point(524, 415);
             buttonStopAutoupdate.Name = "buttonStopAutoupdate";
-            buttonStopAutoupdate.Size = new Size(92, 23);
+            buttonStopAutoupdate.Size = new Size(93, 23);
             buttonStopAutoupdate.TabIndex = 16;
-            buttonStopAutoupdate.Text = "更新停止";
+            buttonStopAutoupdate.Text = "自動更新停止";
             buttonStopAutoupdate.UseVisualStyleBackColor = true;
-            buttonStopAutoupdate.Click += ButtonUpdateStatus_Click;
+            buttonStopAutoupdate.Click += ButtonStopUpdate_Click;
             // 
             // buttonStopAutoPurchase
             // 
-            buttonStopAutoPurchase.Location = new Point(465, 415);
+            buttonStopAutoPurchase.Location = new Point(297, 415);
             buttonStopAutoPurchase.Name = "buttonStopAutoPurchase";
             buttonStopAutoPurchase.Size = new Size(92, 23);
             buttonStopAutoPurchase.TabIndex = 18;
@@ -224,7 +225,7 @@
             // 
             // buttonStartAutoPurchase
             // 
-            buttonStartAutoPurchase.Location = new Point(384, 415);
+            buttonStartAutoPurchase.Location = new Point(216, 415);
             buttonStartAutoPurchase.Name = "buttonStartAutoPurchase";
             buttonStartAutoPurchase.Size = new Size(75, 23);
             buttonStartAutoPurchase.TabIndex = 17;
@@ -234,7 +235,7 @@
             // 
             // buttonGetPrice
             // 
-            buttonGetPrice.Location = new Point(303, 415);
+            buttonGetPrice.Location = new Point(135, 415);
             buttonGetPrice.Name = "buttonGetPrice";
             buttonGetPrice.Size = new Size(75, 23);
             buttonGetPrice.TabIndex = 19;
@@ -253,6 +254,7 @@
             numericUpDownTargetPlaceOdds.Size = new Size(111, 23);
             numericUpDownTargetPlaceOdds.TabIndex = 20;
             numericUpDownTargetPlaceOdds.Value = new decimal(new int[] { 11, 0, 0, 65536 });
+            numericUpDownTargetPlaceOdds.ValueChanged += numericUpDownTargetPlaceOdds_ValueChanged;
             // 
             // label6
             // 
@@ -265,7 +267,7 @@
             // 
             // buttonRemoveInfo
             // 
-            buttonRemoveInfo.Location = new Point(769, 415);
+            buttonRemoveInfo.Location = new Point(747, 415);
             buttonRemoveInfo.Name = "buttonRemoveInfo";
             buttonRemoveInfo.Size = new Size(75, 23);
             buttonRemoveInfo.TabIndex = 22;
@@ -273,11 +275,22 @@
             buttonRemoveInfo.UseVisualStyleBackColor = true;
             buttonRemoveInfo.Click += buttonRemoveInfo_Click;
             // 
+            // buttonAutoUpdate
+            // 
+            buttonAutoUpdate.Location = new Point(424, 415);
+            buttonAutoUpdate.Name = "buttonAutoUpdate";
+            buttonAutoUpdate.Size = new Size(94, 23);
+            buttonAutoUpdate.TabIndex = 23;
+            buttonAutoUpdate.Text = "自動情報更新";
+            buttonAutoUpdate.UseVisualStyleBackColor = true;
+            buttonAutoUpdate.Click += ButtonAutoUpdate_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(973, 450);
+            Controls.Add(buttonAutoUpdate);
             Controls.Add(buttonRemoveInfo);
             Controls.Add(label6);
             Controls.Add(numericUpDownTargetPlaceOdds);
@@ -298,7 +311,7 @@
             Controls.Add(label3);
             Controls.Add(label2);
             Controls.Add(label1);
-            Controls.Add(buttonStartUpdate);
+            Controls.Add(buttonManualUpdate);
             Controls.Add(dataGridView1);
             Name = "Form1";
             Text = "GreatUma";
@@ -314,7 +327,7 @@
         #endregion
 
         private DataGridView dataGridView1;
-        private Button buttonStartUpdate;
+        private Button buttonManualUpdate;
         private Label label1;
         private Label label2;
         private Label label3;
@@ -336,5 +349,6 @@
         private NumericUpDown numericUpDownTargetPlaceOdds;
         private Label label6;
         private Button buttonRemoveInfo;
+        private Button buttonAutoUpdate;
     }
 }
