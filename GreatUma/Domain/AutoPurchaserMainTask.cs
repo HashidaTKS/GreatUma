@@ -134,9 +134,9 @@ namespace GreatUma.Domain
                         condition.RaceData,
                         condition.MatchedWinOdds.HorseData.Select(_ => _.Number).ToList(),
                         price,
-                        condition.CurrentWinOdds.LowOdds,
-                        condition.CurrentWinOdds.LowOdds,
-                        TicketType.Win);
+                        condition.CurrentPlaceOdds.LowOdds,
+                        condition.CurrentPlaceOdds.LowOdds,
+                        TicketType.Place);
                     var betData = new List<BetDatum>
                     {
                         betDatum
