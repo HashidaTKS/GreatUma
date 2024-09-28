@@ -72,14 +72,17 @@ namespace GreatUma.Domain
                     var tdCollection = tr.GetElementsByTagName("td");
                     // インデックスではなくtdのクラス名から取得しても良いのだが馬番のクラスが「Umaban1, Umaban2...」と行によって違うので
                     // インデックスアクセスとした。毎回クラス検索するよりインデックスアクセスの方が早いという事情もある。
-                    var numberText = tdCollection[1].TextContent;
-                    if (!int.TryParse(numberText, out int number))
+                    if (!int.TryParse(tdCollection[0].TextContent, out int bracket))
+                    {
+                        continue;
+                    }
+                    if (!int.TryParse(tdCollection[1].TextContent, out int number))
                     {
                         continue;
                     }
                     var horseName = tdCollection[3].TextContent.Trim();
                     var jockey = tdCollection[6].TextContent.Trim();
-                    result.Add(new HorseDatum(number, horseName, jockey));
+                    result.Add(new HorseDatum(number, bracket, horseName, jockey));
                 }
                 catch(Exception ex)
                 {
@@ -98,6 +101,10 @@ namespace GreatUma.Domain
             for (var i = 1; i < count; i++)
             {
                 var tdList = trCollection[i].GetElementsByTagName("td");
+                if (!int.TryParse(tdList[0].TextContent.Replace("\r", "").Replace("\n", ""), out var bracket))
+                {
+                    continue;
+                }
                 if (!int.TryParse(tdList[1].TextContent.Replace("\r", "").Replace("\n", ""), out var horse))
                 {
                     continue;
@@ -107,9 +114,9 @@ namespace GreatUma.Domain
                     continue;
                 }
                 //ここでは馬番号だけが欲しいので、確率その他の情報は無視
-                yield return new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, "", "") }, odds, odds);
+                yield return new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, bracket, "", "") }, odds, odds);
             }
-        }
+        }   
 
         private IEnumerable<OddsDatum> GetFromPlaceTable(IHtmlCollection<IElement> trCollection)
         {
@@ -117,6 +124,10 @@ namespace GreatUma.Domain
             for (var i = 1; i < count; i++)
             {
                 var tdList = trCollection[i].GetElementsByTagName("td");
+                if (!int.TryParse(tdList[0].TextContent.Replace("\r", "").Replace("\n", ""), out var bracket))
+                {
+                    continue;
+                }
                 if (!int.TryParse(tdList[1].TextContent.Replace("\r", "").Replace("\n", ""), out var horse))
                 {
                     continue;
@@ -140,7 +151,7 @@ namespace GreatUma.Domain
                     continue;
                 }
                 //ここでは馬番号だけが欲しいので、確率その他の情報は無視
-                yield return new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, "", "") }, lowOdds, highOdds);
+                yield return new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, bracket, "", "") }, lowOdds, highOdds);
             }
         }
 
@@ -171,9 +182,8 @@ namespace GreatUma.Domain
                     {
                         var index = startIndexOfHorseNumber + 2 * j;
                         var horse = Convert.ToInt32(tdList[index].TextContent.Replace("\r", "").Replace("\n", ""));
-                        //ここでは馬番号だけが欲しいので、確率その他の情報は無視
-
-                        horseData.Add(new HorseDatum(horse, "", ""));
+                        //ここでは馬番号だけしかわからない。
+                        horseData.Add(new HorseDatum(horse, -1, "", ""));
                     }
                     odds = Convert.ToDouble(tdList[startIndexOfHorseNumber - 1].TextContent.Trim('\n', '\r').Split(' ', '\n', '\r')[0]);
                 }
@@ -293,6 +303,10 @@ namespace GreatUma.Domain
                 for (var i = 1; i < count; i++)
                 {
                     var tdList = trCollection[i].GetElementsByTagName("td");
+                    if (!int.TryParse(tdList[0].TextContent.Replace("\r", "").Replace("\n", ""), out var bracket))
+                    {
+                        continue;
+                    }
                     if (!int.TryParse(tdList[1].TextContent.Replace("\r", "").Replace("\n", ""), out var horse))
                     {
                         continue;
@@ -303,7 +317,7 @@ namespace GreatUma.Domain
                     }
                     var horseName = tdList[2].TextContent.Replace("\r", "").Replace("\n", "");
                     var jockyName = tdList[3].TextContent.Replace("\r", "").Replace("\n", "");
-                    result.Add(new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, horseName, jockyName) }, odds, odds));
+                    result.Add(new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, bracket, horseName, jockyName) }, odds, odds));
                 }
             }
             else if (ticketType == TicketType.Place)
@@ -319,6 +333,10 @@ namespace GreatUma.Domain
                 for (var i = 1; i < count; i++)
                 {
                     var tdList = trCollection[i].GetElementsByTagName("td");
+                    if (!int.TryParse(tdList[0].TextContent.Replace("\r", "").Replace("\n", ""), out var bracket))
+                    {
+                        continue;
+                    }
                     if (!int.TryParse(tdList[1].TextContent.Replace("\r", "").Replace("\n", ""), out var horse))
                     {
                         continue;
@@ -343,7 +361,7 @@ namespace GreatUma.Domain
                     }
                     var horseName = tdList[2].TextContent.Replace("\r", "").Replace("\n", "");
                     var jockyName = tdList[3].TextContent.Replace("\r", "").Replace("\n", "");
-                    result.Add(new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, horseName, jockyName) }, lowOdds, highOdds));
+                    result.Add(new OddsDatum(new List<HorseDatum> { new HorseDatum(horse, bracket, horseName, jockyName) }, lowOdds, highOdds));
                 }
             }
             else
@@ -362,7 +380,8 @@ namespace GreatUma.Domain
 
                         try
                         {
-                            horseList = horseListString.Split('-').Select(_ => new HorseDatum(int.Parse(_), "", "")).ToList();
+                            //ここでは枠番号は仮。
+                            horseList = horseListString.Split('-').Select(_ => new HorseDatum(int.Parse(_), -1, "", "")).ToList();
                         }
                         catch
                         {

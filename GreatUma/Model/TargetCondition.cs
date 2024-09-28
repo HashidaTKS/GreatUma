@@ -17,7 +17,9 @@ namespace GreatUma.Model
         public string Region => RaceData?.HoldingDatum.Region.RegionName ?? "";
         [DisplayName("タイトル")]
         public string Title => RaceData?.Title ?? "";
-        [DisplayName("コース")]
+        [DisplayName("枠")]
+        public string Bracket => CurrentWinOdds?.HorseData[0].Bracket.ToString() ?? "";
+        [DisplayName("馬番")]
         public string Course => RaceData?.CourseType.ToString() ?? "";
         [DisplayName("馬番")]
         public string HorseNum => CurrentWinOdds?.HorseData[0].Number.ToString() ?? "";

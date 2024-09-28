@@ -12,6 +12,8 @@ namespace GreatUma.Models
         [DataMember]
         public int Number { get; set; }
         [DataMember]
+        public int Bracket { get; set; }
+        [DataMember]
         public string Name { get; set; }
         [DataMember]
         public string Jockey { get; set; }
@@ -20,9 +22,10 @@ namespace GreatUma.Models
         {
         }
 
-        public HorseDatum(int number, string name, string jockey)
+        public HorseDatum(int number, int bracket ,string name, string jockey)
         {
             Number = number;
+            Bracket = bracket;
             Name = name;
             Jockey = jockey;
         }
