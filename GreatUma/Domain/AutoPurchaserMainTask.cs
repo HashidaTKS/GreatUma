@@ -124,8 +124,8 @@ namespace GreatUma.Domain
                     }
                     using var scraper = new Scraper();
                     TargetManager.UpdateRealtimeOdds(scraper, condition);
-
-                    if(condition.CurrentWinOdds.LowOdds < condition.PurchaseOdds)
+                    
+                    if(condition.CurrentWinOdds.LowOdds > condition.PurchaseOdds)
                     {
                         AlreadyPurchasedRaceHashSet.Add(condition.Id);
                         return;
