@@ -35,8 +35,8 @@ namespace GreatUma.Domain.Tests
             var raceData = new RaceData(acrual.HoldingData[0], 1);
             var horseInfoList = scraper.GetHorseInfo(raceData);
             Assert.AreEqual(8, horseInfoList.Count);
-            Assert.AreEqual(new HorseDatum(1, "ビップジェシー", "菊沢"), horseInfoList[0]);
-            Assert.AreEqual(new HorseDatum(8, "マイディアホープ", "石田"), horseInfoList[7]);
+            Assert.AreEqual(new HorseDatum(1, 1, "ビップジェシー", "菊沢"), horseInfoList[0]);
+            Assert.AreEqual(new HorseDatum(8, 8, "マイディアホープ", "▲石田"), horseInfoList[7]);
 
         }
 
