@@ -210,7 +210,7 @@ namespace GreatUma.Domain
             var targetPlaceOdds = targetStatus == null ? 1.1 :
                 targetStatus.TargetPlaceOdds;
             var currentTargets = currentCondition.TargetConditionList
-                .Where(_ => _.StartTime > currentTime)
+                //.Where(_ => _.StartTime > currentTime) //Do not remove already started races
                 .Where(_ => _.CurrentPlaceOdds.HighOdds <= targetPlaceOdds);
             foreach (var target in currentTargets)
             {
