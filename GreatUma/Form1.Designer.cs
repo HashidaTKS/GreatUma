@@ -65,11 +65,12 @@
             dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             dataGridView1.Location = new Point(-2, 66);
             dataGridView1.Name = "dataGridView1";
-            dataGridView1.Size = new Size(976, 332);
+            dataGridView1.Size = new Size(1175, 332);
             dataGridView1.TabIndex = 0;
             // 
             // buttonManualUpdate
             // 
+            buttonManualUpdate.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             buttonManualUpdate.Location = new Point(651, 415);
             buttonManualUpdate.Name = "buttonManualUpdate";
             buttonManualUpdate.Size = new Size(90, 23);
@@ -170,6 +171,7 @@
             // 
             // buttonLoginConfig
             // 
+            buttonLoginConfig.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             buttonLoginConfig.Location = new Point(12, 415);
             buttonLoginConfig.Name = "buttonLoginConfig";
             buttonLoginConfig.Size = new Size(75, 23);
@@ -180,7 +182,8 @@
             // 
             // buttonSaveConfition
             // 
-            buttonSaveConfition.Location = new Point(886, 415);
+            buttonSaveConfition.Anchor = AnchorStyles.Bottom | AnchorStyles.Right;
+            buttonSaveConfition.Location = new Point(1085, 415);
             buttonSaveConfition.Name = "buttonSaveConfition";
             buttonSaveConfition.Size = new Size(75, 23);
             buttonSaveConfition.TabIndex = 14;
@@ -205,6 +208,7 @@
             // 
             // buttonStopAutoupdate
             // 
+            buttonStopAutoupdate.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             buttonStopAutoupdate.Location = new Point(524, 415);
             buttonStopAutoupdate.Name = "buttonStopAutoupdate";
             buttonStopAutoupdate.Size = new Size(93, 23);
@@ -215,6 +219,7 @@
             // 
             // buttonStopAutoPurchase
             // 
+            buttonStopAutoPurchase.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             buttonStopAutoPurchase.Location = new Point(297, 415);
             buttonStopAutoPurchase.Name = "buttonStopAutoPurchase";
             buttonStopAutoPurchase.Size = new Size(92, 23);
@@ -225,6 +230,7 @@
             // 
             // buttonStartAutoPurchase
             // 
+            buttonStartAutoPurchase.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             buttonStartAutoPurchase.Location = new Point(216, 415);
             buttonStartAutoPurchase.Name = "buttonStartAutoPurchase";
             buttonStartAutoPurchase.Size = new Size(75, 23);
@@ -235,6 +241,7 @@
             // 
             // buttonGetPrice
             // 
+            buttonGetPrice.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             buttonGetPrice.Location = new Point(135, 415);
             buttonGetPrice.Name = "buttonGetPrice";
             buttonGetPrice.Size = new Size(75, 23);
@@ -267,6 +274,7 @@
             // 
             // buttonRemoveInfo
             // 
+            buttonRemoveInfo.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             buttonRemoveInfo.Location = new Point(747, 415);
             buttonRemoveInfo.Name = "buttonRemoveInfo";
             buttonRemoveInfo.Size = new Size(75, 23);
@@ -277,6 +285,7 @@
             // 
             // buttonAutoUpdate
             // 
+            buttonAutoUpdate.Anchor = AnchorStyles.Bottom | AnchorStyles.Left;
             buttonAutoUpdate.Location = new Point(424, 415);
             buttonAutoUpdate.Name = "buttonAutoUpdate";
             buttonAutoUpdate.Size = new Size(94, 23);
@@ -289,7 +298,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(973, 450);
+            ClientSize = new Size(1172, 450);
             Controls.Add(buttonAutoUpdate);
             Controls.Add(buttonRemoveInfo);
             Controls.Add(label6);

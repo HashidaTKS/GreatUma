@@ -46,6 +46,7 @@ namespace GreatUma
                 {
                     continue;
                 }
+
                 column.ReadOnly = true;
             }
             var targetConfig = TargetConfigRepository.ReadAll();
