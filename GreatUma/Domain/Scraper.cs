@@ -303,7 +303,8 @@ namespace GreatUma.Domain
                 for (var i = 1; i < count; i++)
                 {
                     var tdList = trCollection[i].GetElementsByTagName("td");
-                    if (!int.TryParse(tdList[0].TextContent.Replace("\r", "").Replace("\n", ""), out var bracket))
+                    var bracketString = (tdList[0].FirstChild as IElement)?.GetAttribute("alt")?.Replace("\r", "").Replace("\n", "");
+                    if (!int.TryParse(bracketString, out var bracket))
                     {
                         continue;
                     }
@@ -333,7 +334,8 @@ namespace GreatUma.Domain
                 for (var i = 1; i < count; i++)
                 {
                     var tdList = trCollection[i].GetElementsByTagName("td");
-                    if (!int.TryParse(tdList[0].TextContent.Replace("\r", "").Replace("\n", ""), out var bracket))
+                    var bracketString = (tdList[0].FirstChild as IElement)?.GetAttribute("alt")?.Replace("\r", "").Replace("\n", "");
+                    if (!int.TryParse(bracketString, out var bracket))
                     {
                         continue;
                     }
