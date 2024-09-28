@@ -69,7 +69,10 @@ namespace GreatUma.Domain
                 }
                 targetList = targetList.Concat(targetStatus.TargetConditionList).ToList();
             }
-            targetStatus.TargetConditionList = targetList.OrderBy(_ => _.StartTime).ToList();
+            targetStatus.TargetConditionList = targetList
+                .Where(_ => _.StartTime > TargetDate)
+                .OrderBy(_ => _.StartTime)
+                .ToList();
             TargetConfigRepository.Store(targetStatus);
         }
 

@@ -112,12 +112,10 @@ namespace GreatUma.Domain
                         //3分前より近くなったら購入する
                         return;
                     }
-#if !DEBUG
                     if (condition.StartTime < DateTime.Now)
                     {
                         return;
                     }
-#endif
                     if (condition.PurchaseOdds < 1)
                     {
                         return;
