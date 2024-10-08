@@ -18,5 +18,7 @@ namespace GreatUma.Model
         public int PurchasePrice { get; set; } = 0;
         [DataMember]
         public List<TargetCondition> TargetConditionList { get; set; } = new List<TargetCondition>();
+        [DataMember]
+        public bool IsDebugMode { get; set; } = false;
     }
 }

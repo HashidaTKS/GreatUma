@@ -53,6 +53,7 @@
             label6 = new Label();
             buttonRemoveInfo = new Button();
             buttonAutoUpdate = new Button();
+            checkBoxDebugMode = new CheckBox();
             ((System.ComponentModel.ISupportInitialize)dataGridView1).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownRatio).BeginInit();
             ((System.ComponentModel.ISupportInitialize)numericUpDownPurchasePrice).BeginInit();
@@ -294,11 +295,23 @@
             buttonAutoUpdate.UseVisualStyleBackColor = true;
             buttonAutoUpdate.Click += ButtonAutoUpdate_Click;
             // 
+            // checkBoxDebugMode
+            // 
+            checkBoxDebugMode.AutoSize = true;
+            checkBoxDebugMode.Location = new Point(1074, 37);
+            checkBoxDebugMode.Name = "checkBoxDebugMode";
+            checkBoxDebugMode.Size = new Size(86, 19);
+            checkBoxDebugMode.TabIndex = 24;
+            checkBoxDebugMode.Text = "デバッグモード";
+            checkBoxDebugMode.UseVisualStyleBackColor = true;
+            checkBoxDebugMode.CheckedChanged += checkBoxDebugMode_CheckedChanged;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(1172, 450);
+            Controls.Add(checkBoxDebugMode);
             Controls.Add(buttonAutoUpdate);
             Controls.Add(buttonRemoveInfo);
             Controls.Add(label6);
@@ -359,5 +372,6 @@
         private Label label6;
         private Button buttonRemoveInfo;
         private Button buttonAutoUpdate;
+        private CheckBox checkBoxDebugMode;
     }
 }

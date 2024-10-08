@@ -21,6 +21,7 @@ namespace GreatUma
 
         private bool IsAutoUpdating { get; set; }
         private bool IsAutoPurchasing { get; set; }
+        private bool IsDebugMode => checkBoxDebugMode.Checked;
 
         public Form1()
         {
@@ -61,6 +62,7 @@ namespace GreatUma
                 }
                 numericUpDownPurchasePrice.Value = targetConfig.PurchasePrice;
                 numericUpDownTargetPlaceOdds.Value = (decimal)targetConfig.TargetPlaceOdds;
+                checkBoxDebugMode.Checked = targetConfig.IsDebugMode;
             }
             buttonSaveConfition.Enabled = false;
         }
@@ -216,6 +218,7 @@ namespace GreatUma
             var targetConfig = TargetConfigRepository.ReadAll(true);
             targetConfig.PurchasePrice = (int)this.numericUpDownPurchasePrice.Value;
             targetConfig.TargetPlaceOdds = (double)this.numericUpDownTargetPlaceOdds.Value;
+            targetConfig.IsDebugMode = checkBoxDebugMode.Checked;
             targetConfig.TargetConditionList = BindingList?.Select(_ => _)?.ToList() ?? new List<TargetCondition>();
             TargetConfigRepository.Store(targetConfig);
             buttonSaveConfition.Enabled = false;
@@ -232,6 +235,11 @@ namespace GreatUma
         }
 
         private void numericUpDownTargetPlaceOdds_ValueChanged(object sender, EventArgs e)
+        {
+            buttonSaveConfition.Enabled = true;
+        }
+
+        private void checkBoxDebugMode_CheckedChanged(object sender, EventArgs e)
         {
             buttonSaveConfition.Enabled = true;
         }

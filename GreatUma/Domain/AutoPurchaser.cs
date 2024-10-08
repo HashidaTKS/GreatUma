@@ -42,12 +42,16 @@ namespace GreatUma.Domain
             disposed = true;
         }
 
-        public AutoPurchaser(LoginConfig loginConfig)
+        public AutoPurchaser(LoginConfig loginConfig, bool isDebugMode = false)
         {
+            var driverService = ChromeDriverService.CreateDefaultService();
             var chromeOptions = new ChromeOptions();
-            //現状では買えているか確認のためにコメントアウト
-            //chromeOptions.AddArguments("headless", "disable-gpu");
-            Chrome = new ChromeDriver(Path.GetDirectoryName(Assembly.GetEntryAssembly().Location), chromeOptions);
+            if (!isDebugMode)
+            {
+                driverService.HideCommandPromptWindow = true;
+                chromeOptions.AddArguments("headless", "disable-gpu");
+            }
+            Chrome = new ChromeDriver(driverService, chromeOptions);
             LoginConfig = loginConfig;
         }
 

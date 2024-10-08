@@ -34,10 +34,10 @@ namespace GreatUma.Domain
             {
                 TargetDate = currentTime.Date;
             }
-            using var scraper = new Scraper();
-            StoreCurrentAllTargetsIfNeed(scraper);
-            this.UpdateAllRealtimeOdds();
             var targetStatus = TargetConfigRepository.ReadAll(true);
+            using var scraper = new Scraper(targetStatus.IsDebugMode);
+            StoreCurrentAllTargetsIfNeed(scraper);
+            this.UpdateAllRealtimeOdds(targetStatus.IsDebugMode);
             var targetList = SearchMatchedTargetConditions(currentTime)?.OrderBy(_ => _.StartTime).ToList() ?? new List<TargetCondition>();
             if (targetStatus.TargetConditionList != null)
             {
@@ -76,9 +76,9 @@ namespace GreatUma.Domain
             TargetConfigRepository.Store(targetStatus);
         }
 
-        public void UpdateAllRealtimeOdds()
+        public void UpdateAllRealtimeOdds(bool isDebug = false)
         {
-            using var scraper = new Scraper();
+            using var scraper = new Scraper(isDebug);
             var currentWholeConditions = WholeTargetConditionsRepository.ReadAll(true);
             var currentCondition = currentWholeConditions.TargetConditionsOfDay?.FirstOrDefault(_ => _.TargetDate == TargetDate);
             if (currentCondition == null)

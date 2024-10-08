@@ -91,7 +91,7 @@ namespace GreatUma.Domain
                 }
                 foreach (var condition in currentStatus.TargetConditionList)
                 {
-                    PurchaseSingleRaceIfNeed(condition, currentStatus.PurchasePrice);
+                    PurchaseSingleRaceIfNeed(condition, currentStatus.PurchasePrice, currentStatus.IsDebugMode);
                 }
             }
             catch (Exception ex)
@@ -99,7 +99,7 @@ namespace GreatUma.Domain
                 LoggerWrapper.Warn(ex);
             }
 
-            void PurchaseSingleRaceIfNeed(TargetCondition condition, int price)
+            void PurchaseSingleRaceIfNeed(TargetCondition condition, int price, bool isDebugMode = false)
             {
                 try
                 {
@@ -120,7 +120,7 @@ namespace GreatUma.Domain
                     {
                         return;
                     }
-                    using var scraper = new Scraper();
+                    using var scraper = new Scraper(isDebugMode);
                     TargetManager.UpdateRealtimeOdds(scraper, condition);
                     
                     if(condition.CurrentWinOdds.LowOdds > condition.PurchaseOdds)
@@ -143,7 +143,7 @@ namespace GreatUma.Domain
                     {
                         LoggerWrapper.Info($"Bet target(s) exist");
                         var loginConfig = new LoginConfigRepository().ReadAll();
-                        using var autoPurchaser = new AutoPurchaser(loginConfig);
+                        using var autoPurchaser = new AutoPurchaser(loginConfig, isDebugMode);
                         if (autoPurchaser.Purchase(betData))
                         {
                             AlreadyPurchasedRaceHashSet.Add(condition.Id);
